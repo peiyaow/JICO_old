@@ -2,8 +2,8 @@ library(mlbench)
 library(caret)
 library(glmnet)
 library(pls)
-# source("~/Documents/GitHub/continuum/simulation/function.R")
-source("~/continuum/simulation/function.R")
+source("~/Documents/GitHub/continuum/function/function.R")
+# source("~/continuum/simulation/function.R")
 
 data(BostonHousing2)
 num = c("lon", "lat", "crim", "zn", "indus", "chas", "nox", "rm", "age", "dis", "tax", "ptratio", "b", "lstat")  
@@ -44,15 +44,22 @@ for (i in 1:50){
   n.train = nrow(X.train)
   n.test = nrow(X.test)
   
-  ml.ridge = cv.glmnet(x = X.train, y = Y.train, alpha = 0, lambda = exp(seq(log(1000), log(.1), length.out = 50)))
-  lambda = ml.ridge$lambda*n.train/2
+  ml.pls = plsr(Y.train ~ X.train, validation = "CV", scale = T)
+  ml.pls$projection
+  ml.ridge = cv.glmnet(x = X.train, y = scale(Y.train), alpha = 0)
+  lambda = ml.ridge$lambda.min
+  lambda.vec = ml.ridge$lambda
+  haha = continuum.ridge.S0(X.train, scale(Y.train), lambda)
+  hehe = continuum.ridge(X.train, Y.train, 0, 1/2)
+  beta.C_S0 = C2beta(X.train, Y.train, haha[,1], lambda)$coef
+  beta.C_ = C2beta(X.train, Y.train, hehe[,1], lambda)$coef
+  ml.ridge = cv.glmnet(x = X.train, y = Y.train, alpha = 0)
+  beta.ridge = matrix(coef(ml.ridge, s = "lambda.min"))
   
-  continuum.res = cv.continuum.ridge(X.train, Y.train, lambda, gamma = 0)
+  continuum.res = cv.continuum.ridge(X.train, Y.train, lambda.vec, gamma = 0)
+  beta.C_cv = C2beta(X.train, Y.train, continuum.res$C, continuum.res$lam)$coef
   
-  beta.C = C2beta(X.train, Y.train, continuum.res$C, continuum.res$lam)$coef
-  beta.glmnet = matrix(coef(ml.ridge, s = "lambda.min"))
-  
-  print(c(mean((Y.test - cbind(1, X.test)%*%beta.C)^2), mean((Y.test - cbind(1, X.test)%*%beta.glmnet)^2)))
-  write.table(t(c(mean((Y.test - cbind(1, X.test)%*%beta.C)^2), mean((Y.test - cbind(1, X.test)%*%beta.glmnet)^2))), file = "MSE.csv", sep = ',', append = T, col.names = F, row.names = F)
+  print(c(mean((Y.test - cbind(1, X.test)%*%beta.C_S0)^2), mean((Y.test - cbind(1, X.test)%*%beta.C_)^2), mean((Y.test - cbind(1, X.test)%*%beta.C_cv)^2), mean((Y.test - cbind(1, X.test)%*%beta.ridge)^2)))
+#  write.table(t(c(mean((Y.test - cbind(1, X.test)%*%beta.C)^2), mean((Y.test - cbind(1, X.test)%*%beta.glmnet)^2))), file = "MSE.csv", sep = ',', append = T, col.names = F, row.names = F)
   
 }

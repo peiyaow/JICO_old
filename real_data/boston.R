@@ -2,6 +2,7 @@ library(mlbench)
 library(caret)
 library(glmnet)
 library(pls)
+source("~/Documents/GitHub/continuum/function/function.R")
 
 data(BostonHousing2)
 num = c("lon", "lat", "crim", "zn", "indus", "chas", "nox", "rm", "age", "dis", "tax", "ptratio", "b", "lstat")  
