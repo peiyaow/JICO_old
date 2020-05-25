@@ -2,7 +2,8 @@ library(MASS)
 library(pls)
 library(glmnet)
 
-source("~/continuum/simulation/function/function.R")
+source("~/Documents/GitHub/continuum/function/function.R")
+# source("~/continuum/simulation/function/function.R")
 
 p = 100
 n = 100
@@ -13,6 +14,10 @@ dim(H2) # p by n
 beta = c(rep(1/25, 50), rep(1/25, p-50))
 beta1 = c(rep(1/50, 25), rep(0, p-25))
 beta2 = c(rep(-1/50, 25), rep(0, p-25))
+G = 2
+
+show.image(t(H))
+show.image(X.list[[1]])
 
 for (i in 1:10){
     # -------------------------------------- generate data ---------------------------------------
@@ -45,8 +50,17 @@ for (i in 1:10){
     Y.test = c(Y1.test, Y2.test)
     # ------------------------------------------------------------------------------------------
     
+    # X.mean = apply(X, 2, mean)
+    # X.sd = apply(X, 2, sd)
+    # X = sweep(X, 2, X.mean)
+    # X = sweep(X, 2, X.sd, FUN = "/")
+    # Y.mean = mean(Y)
+    # Y.sd = sd(Y)
+    # Y = sweep(matrix(Y), 2, Y.mean)
+    # Y = sweep(matrix(Y), 2, Y.sd, FUN = "/")
+    
     # -------------------------------- global method -------------------------------------------
-    ml.pls = plsr(Y ~ X, validation = "CV", scale = T)
+    ml.pls = plsr(Y~X, validation = "CV", scale = T)
     # ncomp.pls = selectNcomp(ml.pls, method = "onesigma", plot = F)
     ncomp.pls = which.min(RMSEP(ml.pls)$val[1,,])-1
     
@@ -57,14 +71,17 @@ for (i in 1:10){
     ml.ridge = cv.glmnet(x = X, y = Y, alpha = 0)
     ml.lasso = cv.glmnet(x = X, y = Y, alpha = 1)
     
-    ml.continuum = cv.continuum.ridge(X, Y, lambda = 0, gam = .5)
+    ml.continuum = cv.continuum.ridge(X, Y, lambda = 0, gam = 1)
     C.pls = ml.continuum$C
-    beta.C.pls = C2beta(X, Y, ml.continuum$C, ml.continuum$lam)$coef
+    beta.C.pls = C2beta(X, Y, C.pls, ml.continuum$lam)$coef
+    C.pls0 = ml.continuum$C0[,0:ncomp.pls]
+    beta.C.pls0 = C2beta(X, Y, C.pls0, ml.continuum$lam)$coef
     
     ml.continuum = cv.continuum.ridge(X, Y, lambda = 0, gam = 1e10)
     C.pcr = ml.continuum$C
-    beta.C.pcr = C2beta(X, Y, ml.continuum$C, ml.continuum$lam)$coef
-    
+    beta.C.pcr = C2beta(X, Y, C.pcr, ml.continuum$lam)$coef
+    C.pcr0 = ml.continuum$C0[,0:ncomp.pcr]
+    beta.C.pcr0 = C2beta(X, Y, C.pcr0, ml.continuum$lam)$coef
     
     ml.ridge.scale = cv.glmnet(x = X, y = scale(Y), alpha = 0)
     lambda = ml.ridge.scale$lambda.min
@@ -88,19 +105,25 @@ for (i in 1:10){
     Yhat.lasso = predict(ml.lasso, newx = X.test, s = ml.lasso$lambda.min)
     Yhat.continuum.ridge0 = cbind(1, X.test)%*%beta.C.ridge0
     Yhat.continuum.ridge = cbind(1, X.test)%*%beta.C.ridge
+    Yhat.continuum.pls0 = cbind(1, X.test)%*%beta.C.pls0
     Yhat.continuum.pls = cbind(1, X.test)%*%beta.C.pls
+    Yhat.continuum.pcr0 = cbind(1, X.test)%*%beta.C.pcr0
     Yhat.continuum.pcr = cbind(1, X.test)%*%beta.C.pcr
     
     mse.pls = mean((Yhat.pls - Y.test)^2)
     mse.pcr = mean((Yhat.pcr - Y.test)^2)
     mse.ridge = mean((Yhat.ridge - Y.test)^2)
     mse.lasso = mean((Yhat.lasso - Y.test)^2)
+    mse.continuum.pls0 = mean((Yhat.continuum.pls0 - Y.test)^2)
     mse.continuum.pls = mean((Yhat.continuum.pls - Y.test)^2)
+    mse.continuum.pcr0 = mean((Yhat.continuum.pcr0 - Y.test)^2)
     mse.continuum.pcr = mean((Yhat.continuum.pcr - Y.test)^2)
-    mse.continuum.ridge = mean((Yhat.continuum.ridge - Y.test)^2)
     mse.continuum.ridge0 = mean((Yhat.continuum.ridge0 - Y.test)^2)
+    mse.continuum.ridge = mean((Yhat.continuum.ridge - Y.test)^2)
     
-    c(mse.pls, mse.pcr, mse.ridge, mse.lasso, mse.continuum.pls, mse.continuum.pcr, mse.continuum.ridge, mse.continuum.ridge0)
+    c(mse.pls, mse.pcr, mse.ridge, mse.lasso)
+    c(mse.continuum.pls0, mse.continuum.pcr0, mse.continuum.ridge0)
+    c(mse.continuum.pls, mse.continuum.pcr, mse.continuum.ridge)
     # ------------------------------------------------------------------------------------------
     
     # ---------------------------------- groupwise method --------------------------------------
@@ -115,11 +138,13 @@ for (i in 1:10){
     ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g]], alpha = 0))
     ml.lasso.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g]], alpha = 1))
     
-    ml.continuum.pls.list = lapply(1:G, function(g) cv.continuum.ridge(X.list[[g]], Y.list[[g]], 0, gam = 1/2))
+    ml.continuum.pls.list = lapply(1:G, function(g) cv.continuum.ridge(X.list[[g]], Y.list[[g]], 0, gam = 1))
     beta.C.pls.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.list[[g]], ml.continuum.pls.list[[g]]$C, ml.continuum.pls.list[[g]]$lam)$coef)
+    beta.C.pls0.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.list[[g]], ml.continuum.pls.list[[g]]$C0[,0:ncomp.pls.list[[g]]], ml.continuum.pls.list[[g]]$lam)$coef)
     
     ml.continuum.pcr.list = lapply(1:G, function(g) cv.continuum.ridge(X.list[[g]], Y.list[[g]], 0, gam = 1e10))
     beta.C.pcr.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.list[[g]], ml.continuum.pcr.list[[g]]$C, ml.continuum.pcr.list[[g]]$lam)$coef)
+    beta.C.pcr0.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.list[[g]], ml.continuum.pcr.list[[g]]$C0[,0:ncomp.pcr.list[[g]]], ml.continuum.pcr.list[[g]]$lam)$coef)
     
     ml.ridge.scale.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = scale(Y.list[[g]]), alpha = 0))
     lambda.list = lapply(1:G, function(g) ml.ridge.scale.list[[g]]$lambda.min)
@@ -142,7 +167,9 @@ for (i in 1:10){
     Yhat.continuum.ridge.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.ridge.list[[g]])
     Yhat.continuum.ridge0.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.ridge0.list[[g]])
     Yhat.continuum.pls.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pls.list[[g]])
+    Yhat.continuum.pls0.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pls0.list[[g]])
     Yhat.continuum.pcr.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pcr.list[[g]])
+    Yhat.continuum.pcr0.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pcr0.list[[g]])
     
     mse.pls.group.vec = sapply(1:G, function(g) mean((Yhat.pls.list[[g]] - Y.test.list[[g]])^2))
     mse.pcr.group.vec = sapply(1:G, function(g) mean((Yhat.pcr.list[[g]] - Y.test.list[[g]])^2))
@@ -151,7 +178,9 @@ for (i in 1:10){
     mse.continuum.ridge.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.ridge.list[[g]] - Y.test.list[[g]])^2))
     mse.continuum.ridge0.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.ridge0.list[[g]] - Y.test.list[[g]])^2))
     mse.continuum.pls.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.pls.list[[g]] - Y.test.list[[g]])^2))
+    mse.continuum.pls0.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.pls0.list[[g]] - Y.test.list[[g]])^2))
     mse.continuum.pcr.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.pcr.list[[g]] - Y.test.list[[g]])^2))
+    mse.continuum.pcr0.group.vec = sapply(1:G, function(g) mean((Yhat.continuum.pcr0.list[[g]] - Y.test.list[[g]])^2))
     
     mse.pls.group = mean(mse.pls.group.vec)
     mse.pcr.group = mean(mse.pcr.group.vec)
@@ -160,9 +189,17 @@ for (i in 1:10){
     mse.continuum.ridge.group = mean(mse.continuum.ridge.group.vec)
     mse.continuum.ridge0.group = mean(mse.continuum.ridge0.group.vec)
     mse.continuum.pls.group = mean(mse.continuum.pls.group.vec)
+    mse.continuum.pls0.group = mean(mse.continuum.pls0.group.vec)
     mse.continuum.pcr.group = mean(mse.continuum.pcr.group.vec)
+    mse.continuum.pcr0.group = mean(mse.continuum.pcr0.group.vec)
     
-    c(mse.pls.group, mse.pcr.group, mse.ridge.group, mse.lasso.group, mse.continuum.pls.group, mse.continuum.pcr.group, mse.continuum.ridge.group, mse.continuum.ridge0.group)
+    c(mse.pls.group, mse.pcr.group, mse.ridge.group, mse.lasso.group)
+    c(mse.continuum.pls0.group, mse.continuum.pcr0.group, mse.continuum.ridge0.group)
+    c(mse.continuum.pls.group, mse.continuum.pcr.group, mse.continuum.ridge0.group)
+    
+    cbind(mse.pls.group.vec, mse.pcr.group.vec, mse.ridge.group.vec, mse.lasso.group.vec)
+    cbind(mse.continuum.pls0.group.vec, mse.continuum.pcr0.group.vec, mse.continuum.ridge0.group.vec)
+    cbind(mse.continuum.pls.group.vec, mse.continuum.pcr.group.vec, mse.continuum.ridge0.group.vec)
     # --------------------------------------------------------------------------------------------
     
     # ----------------------------------- integrated method --------------------------------------
@@ -173,23 +210,23 @@ for (i in 1:10){
     # continuum ridge0
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.C.ridge0)
     Y.res.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.continuum.list[[g]])
-    C.res.list = lapply(1:G, function(g) continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.ridge0, lambda, gam = 0))
-    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]][,1], 0)$coef)
+    C.res.list = lapply(1:G, function(g) cv.continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.ridge0, lambda, gam = 0)$C)
+    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]], 0)$coef)
     Yhat.continuum.res.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.res.list[[g]])
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.ridge0)
     mse.continuum.ridge0.int.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]] + Yhat.continuum.res.list[[g]]-Y.test.list[[g]])^2))
     mse.continuum.ridge0.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]]-Y.test.list[[g]])^2))
     mse.continuum.ridge0.int = mean(mse.continuum.ridge0.int.vec)
     
-    g = 1
+    g = 2
     t(C.res.list[[g]])%*%t(scale(X.list[[g]]))%*%scale(X.list[[g]])%*%C.ridge0
     
     
     # continuum ridge
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.C.ridge)
     Y.res.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.continuum.list[[g]])
-    C.res.list = lapply(1:G, function(g) continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.ridge, lambda, gam = 0))
-    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]][,1], 0)$coef)
+    C.res.list = lapply(1:G, function(g) cv.continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.ridge, lambda, gam = 0)$C)
+    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]], 0)$coef)
     Yhat.continuum.res.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.res.list[[g]])
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.ridge)
     mse.continuum.ridge.int.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]] + Yhat.continuum.res.list[[g]]-Y.test.list[[g]])^2))
@@ -203,26 +240,26 @@ for (i in 1:10){
     # continuum pls
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.C.pls)
     Y.res.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.continuum.list[[g]])
-    C.res.list = lapply(1:G, function(g) continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.pls, 0, gam = 1/2))
-    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]][,1], 0)$coef)
+    C.res.list = lapply(1:G, function(g) cv.continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.pls, 0, gam = 1)$C)
+    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]], 0)$coef)
     Yhat.continuum.res.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.res.list[[g]])
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pls)
     mse.continuum.pls.int.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]] + Yhat.continuum.res.list[[g]]-Y.test.list[[g]])^2))
     mse.continuum.pls.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]]-Y.test.list[[g]])^2))
     mse.continuum.pls.int = mean(mse.continuum.pls.int.vec)
     
-    g = 1
+    g = 2
     t(C.res.list[[g]])%*%t(scale(X.list[[g]]))%*%scale(X.list[[g]])%*%C.pls
     
     # continuum pcr
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.C.pcr)
     Y.res.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.continuum.list[[g]])
-    C.res.list = lapply(1:G, function(g) continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.pcr, 0, gam = 1e10))
-    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]][,1], 0)$coef)
+    C.res.list = lapply(1:G, function(g) cv.continuum.ridge.res(X.list[[g]], Y.res.list[[g]], C.pcr, 0, gam = 1e10)$C)
+    beta.C.res.list = lapply(1:G, function(g) C2beta(X.list[[g]], Y.res.list[[g]], C.res.list[[g]], 0)$coef)
     Yhat.continuum.res.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.res.list[[g]])
     Yhat.continuum.list = lapply(1:G, function(g) cbind(1, X.test.list[[g]])%*%beta.C.pcr)
     mse.continuum.pcr.int.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]] + Yhat.continuum.res.list[[g]]-Y.test.list[[g]])^2))
-    mse.continuum.pcr.vec = lapply(1:G, function(g) mean((Yhat.continuum.list[[g]]-Y.test.list[[g]])^2))
+    mse.continuum.pcr.vec = sapply(1:G, function(g) mean((Yhat.continuum.list[[g]]-Y.test.list[[g]])^2))
     mse.continuum.pcr.int = mean(mse.continuum.pcr.int.vec)
     
     g = 1
@@ -237,3 +274,5 @@ for (i in 1:10){
                     c(mse.continuum.pls.int.vec, mse.continuum.pcr.int.vec, mse.continuum.ridge.int.vec, mse.continuum.ridge0.int.vec))), file = "MSE_group.csv", sep = ',', append = T, col.names = F, row.names = F)
     
 }
+
+

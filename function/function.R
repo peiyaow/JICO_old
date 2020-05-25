@@ -221,7 +221,7 @@ continuum.ridge = function(X, Y, lambda, gam){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn, control = list(maxit = 50))
+  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn, method = "Newton", control = list(maxit = 50))
   rho = nleqslv.res$x
   if (nleqslv.res$termcd != 1){
     print(paste0("Warning! The value is ", as.character(fn(rho))))
@@ -239,11 +239,19 @@ continuum.ridge = function(X, Y, lambda, gam){
   B = E%*%Z
   rho0 = rho
 #  tau = (t(Z)%*%d)[1,1]
+  
+  SOLVE = function(x){
+    if (sum(dim(x))){
+      return(solve(x))
+    }else{
+      return(x)
+    }
+  }
     
   fn = function(rho){
 #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%solve(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
 #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -251,24 +259,25 @@ continuum.ridge = function(X, Y, lambda, gam){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  while (1/kappa(t(B)%*%solve(A)%*%B) > 1e-7){
-    nleqslv.res = nleqslv(rho0, fn, control = list(maxit = 50))
+#  while (1/kappa(t(B)%*%solve(A)%*%B) > 1e-17){
+  while (rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+#    print(1)
+#    print(rcond(t(B)%*%solve(A)%*%B))
+    nleqslv.res = nleqslv(rho0, fn, method = "Newton", control = list(maxit = 50))
     rho = nleqslv.res$x
     if (nleqslv.res$termcd != 1){
       print(paste0("Warning! The value is ", as.character(fn(rho))))
-      break
-      #     print(fn(rho, gam, e, V, d))
-      #     print(nleqslv.res$termcd)
-    }
-    if (abs(rho0-rho) < 1e-7){
-      break
+#      break
     }
 #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    if (1/kappa(t(B)%*%solve(A)%*%B) < 1e-7){
+#    print(2)
+#    print(rcond(t(B)%*%solve(A)%*%B))
+#    if (1/kappa(t(B)%*%solve(A)%*%B) < 1e-17){
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
       break
     }
-    M = solve(A)- solve(A)%*%B%*%solve(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
 #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -303,7 +312,14 @@ C2beta = function(X, Y, cc, lambda){
   
   cc = matrix(cc, nrow = ncol(X))
   om = ncol(cc) #omega
-  beta.C = cc%*%solve(t(cc)%*%S%*%cc + n*lambda*diag(om))%*%t(cc)%*%s
+  SOLVE = function(x){
+    if (sum(dim(x))){
+      return(solve(x))
+    }else{
+      return(x)
+    }
+  }
+  beta.C = cc%*%SOLVE(t(cc)%*%S%*%cc + n*lambda*diag(om))%*%t(cc)%*%s
   beta.C = beta.C/X.sd*Y.sd
   intercept = Y.mean - X.mean%*%beta.C
 
@@ -311,7 +327,7 @@ C2beta = function(X, Y, cc, lambda){
 }
 
 # fix gam tune lambda and omega
-cv.continuum.ridge = function(X, Y, lambda, gam = 0.5, nfolds = 10){
+cv.continuum.ridge = function(X, Y, lambda, gam = 1, nfolds = 10){
   n = nrow(X)
   p = ncol(X)
   n.lambda = length(lambda)
@@ -327,20 +343,24 @@ cv.continuum.ridge = function(X, Y, lambda, gam = 0.5, nfolds = 10){
     C.list = lapply(lambda, function(lam) continuum.ridge(X.train, Y.train, lam, gam = gam)) # length lambda
     n.C.vec = sapply(C.list, ncol)
     print(n.C.vec)
-    beta.list = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) C2beta(X.train, Y.train, C.list[[ix.lam]][,1:ix.C], lambda[ix.lam])$coef))
-    # print(beta.list)
-    mse.list[[k]] = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) mean((Y.val - cbind(1, X.val)%*%beta.list[[ix.lam]][[ix.C]])^2)))
-    mse.list[[k]] = sapply(1:n.lambda, function(ix.lam) c(unlist(mse.list[[k]][[ix.lam]]), rep(NA, (m - n.C.vec)[ix.lam])))
+#    beta.list = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) C2beta(X.train, Y.train, C.list[[ix.lam]][,1:ix.C], lambda[ix.lam])$coef))
+    beta.list = lapply(1:n.lambda, function(ix.lam) lapply(0:n.C.vec[ix.lam], function(ix.C) C2beta(X.train, Y.train, C.list[[ix.lam]][,0:ix.C], lambda[ix.lam])$coef))
+#    mse.list[[k]] = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) mean((Y.val - cbind(1, X.val)%*%beta.list[[ix.lam]][[ix.C]])^2)))
+    mse.list[[k]] = lapply(1:n.lambda, function(ix.lam) lapply(0:n.C.vec[ix.lam], function(ix.C) mean((Y.val - cbind(1, X.val)%*%beta.list[[ix.lam]][[ix.C+1]])^2)))
+#    mse.list[[k]] = sapply(1:n.lambda, function(ix.lam) c(unlist(mse.list[[k]][[ix.lam]]), rep(NA, (m - n.C.vec)[ix.lam])))
+    mse.list[[k]] = sapply(1:n.lambda, function(ix.lam) c(unlist(mse.list[[k]][[ix.lam]]), rep(NA, (m+1 - n.C.vec)[ix.lam])))
     }
   MSE = Reduce('+', mse.list)/nfolds
 #  print(MSE)
   n.C = nrow(MSE) 
   min.id = which.min(MSE)
-  n.C.selected = (min.id - 1)%%n.C + 1
+#  n.C.selected = (min.id - 1)%%n.C + 1
+  n.C.selected = (min.id - 1)%%n.C
   min.id.lam = ceiling(min.id/n.C)
   lam.selected = lambda[min.id.lam]
   C = continuum.ridge(X, Y, lambda = lam.selected, gam = gam)
-  C.selected = as.matrix(C[,1:n.C.selected])
+#  C.selected = as.matrix(C[,1:n.C.selected])
+  C.selected = as.matrix(C[,0:n.C.selected])
   
   return(list(C = C.selected, C0 = C, n.C = n.C.selected, lam = lam.selected, MSE = MSE))
 }
@@ -367,11 +387,19 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
   d = t(V)%*%s
   B = E%*%t(V)%*%C
   
+  SOLVE = function(x){
+    if (sum(dim(x))){
+      return(solve(x))
+    }else{
+      return(x)
+    }
+  }
+  
   tau = 1
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%solve(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
 #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -379,7 +407,7 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  nleqslv.res = nleqslv(rho0, fn)
+  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn)
   rho = nleqslv.res$x
   if (nleqslv.res$termcd != 1){
     print(paste0("Warning! The value is ", as.character(fn(rho))))
@@ -387,7 +415,7 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
   
   #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = solve(A)- solve(A)%*%B%*%solve(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
 #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -395,7 +423,7 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
   B = E%*%cbind(t(V)%*%C, Z)
   rho0 = rho
   
-  while (1/kappa(t(B)%*%solve(A)%*%B) > 1e-7){
+  while (rcond(t(B)%*%solve(A)%*%B) > 1e-10){
     nleqslv.res = nleqslv(rho0, fn)
     rho = nleqslv.res$x
     if (nleqslv.res$termcd != 1){
@@ -404,7 +432,10 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
     }
 #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%solve(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+      break
+    }
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
 #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -422,7 +453,287 @@ continuum.ridge.res = function(X, Y, C, lambda, gam){
   return(as.matrix(C))
 }
 
+# fix gam tune lambda and omega
+cv.continuum.ridge.res = function(X, Y, cc, lambda, gam = 1, nfolds = 10){
+  n = nrow(X)
+  p = ncol(X)
+  n.lambda = length(lambda)
+  flds = createFolds(Y, k = nfolds, list = TRUE, returnTrain = FALSE)
+  m = min(n-1, p)
+  #  m = 10
+  mse.list = list()
+  for (k in 1:nfolds){
+    X.train = X[unlist(flds[-k]), ]
+    X.val = X[unlist(flds[k]), ]
+    Y.train = Y[unlist(flds[-k])]
+    Y.val = Y[unlist(flds[k])]
+    C.list = lapply(lambda, function(lam) continuum.ridge.res(X.train, Y.train, cc, lam, gam = gam)) # length lambda
+    n.C.vec = sapply(C.list, ncol)
+    print(n.C.vec)
+    #    beta.list = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) C2beta(X.train, Y.train, C.list[[ix.lam]][,1:ix.C], lambda[ix.lam])$coef))
+    beta.list = lapply(1:n.lambda, function(ix.lam) lapply(0:n.C.vec[ix.lam], function(ix.C) C2beta(X.train, Y.train, C.list[[ix.lam]][,0:ix.C], lambda[ix.lam])$coef))
+    #    mse.list[[k]] = lapply(1:n.lambda, function(ix.lam) lapply(1:n.C.vec[ix.lam], function(ix.C) mean((Y.val - cbind(1, X.val)%*%beta.list[[ix.lam]][[ix.C]])^2)))
+    mse.list[[k]] = lapply(1:n.lambda, function(ix.lam) lapply(0:n.C.vec[ix.lam], function(ix.C) mean((Y.val - cbind(1, X.val)%*%beta.list[[ix.lam]][[ix.C+1]])^2)))
+    #    mse.list[[k]] = sapply(1:n.lambda, function(ix.lam) c(unlist(mse.list[[k]][[ix.lam]]), rep(NA, (m - n.C.vec)[ix.lam])))
+    mse.list[[k]] = sapply(1:n.lambda, function(ix.lam) c(unlist(mse.list[[k]][[ix.lam]]), rep(NA, (m+1 - n.C.vec)[ix.lam])))
+  }
+  MSE = Reduce('+', mse.list)/nfolds
+  #  print(MSE)
+  n.C = nrow(MSE) 
+  min.id = which.min(MSE)
+  #  n.C.selected = (min.id - 1)%%n.C + 1
+  n.C.selected = (min.id - 1)%%n.C
+  min.id.lam = ceiling(min.id/n.C)
+  lam.selected = lambda[min.id.lam]
+  C = continuum.ridge.res(X, Y, cc, lambda = lam.selected, gam = gam)
+  #  C.selected = as.matrix(C[,1:n.C.selected])
+  C.selected = as.matrix(C[,0:n.C.selected])
+  
+  return(list(C = C.selected, C0 = C, n.C = n.C.selected, lam = lam.selected, MSE = MSE))
+}
 
+
+continuum.ridge.fix = function(X, Y, lambda, gam, om){
+  #om: number of columns
+  n = nrow(X)
+  p = ncol(X)
+  X.mean = apply(X, 2, mean)
+  X.sd = apply(X, 2, sd)
+  X = sweep(X, 2, X.mean)
+  X = sweep(X, 2, X.sd, FUN = "/")
+  Y.mean = mean(Y)
+  Y.sd = sd(Y)
+  Y = sweep(matrix(Y), 2, Y.mean)
+  Y = sweep(matrix(Y), 2, Y.sd, FUN = "/")
+  
+  S = t(X)%*%X
+  s = t(X)%*%Y
+  m = min(n-1, p)
+  
+  e = eigen(S)$values[1:m]
+  E = diag(e)
+  V = eigen(S)$vectors[, 1:m]
+  d = t(V)%*%s
+  
+  tau = 1
+  fn = function(rho){
+    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+    M = solve(A)
+    #    q = tau*rho^(gam-1)*d
+    q = tau*rho*d
+    Mq = M%*%q
+    z = Mq/norm(Mq, "2")
+    return(t(z)%*%E%*%z + n*lambda - rho)
+  }
+  
+  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn, method = "Newton", control = list(maxit = 50))
+  rho = nleqslv.res$x
+  if (nleqslv.res$termcd != 1){
+    print(paste0("Warning! The value is ", as.character(fn(rho))))
+    #     print(fn(rho, gam, e, V, d))
+    #     print(nleqslv.res$termcd)
+  }
+  
+  #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+  A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+  M = solve(A)
+  #  q = tau*rho^(gam-1)*d
+  q = tau*rho*d
+  Mq = M%*%q
+  Z = Mq/norm(Mq, "2")
+  B = E%*%Z
+  rho0 = rho
+  #  tau = (t(Z)%*%d)[1,1]
+  
+  SOLVE = function(x){
+    if (sum(dim(x))){
+      return(solve(x))
+    }else{
+      return(x)
+    }
+  }
+  
+  fn = function(rho){
+    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    #    q = tau*rho^(gam-1)*d
+    q = tau*rho*d
+    Mq = M%*%q
+    z = Mq/norm(Mq, "2")
+    return(t(z)%*%E%*%z + n*lambda - rho)
+  }
+  
+  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+    #    print(1)
+    #    print(rcond(t(B)%*%solve(A)%*%B))
+    nleqslv.res = nleqslv(rho0, fn, method = "Newton", control = list(maxit = 50))
+    rho = nleqslv.res$x
+    if (nleqslv.res$termcd != 1){
+      print(paste0("Warning! The value is ", as.character(fn(rho))))
+      #      break
+    }
+    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+    #    print(2)
+    #    print(rcond(t(B)%*%solve(A)%*%B))
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+      break
+    }
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    #    q = tau*rho^(gam-1)*d
+    q = tau*rho*d
+    Mq = M%*%q
+    z = Mq/norm(Mq, "2")
+    Z = cbind(Z, z)
+    B = E%*%Z
+    rho0 = rho
+    #    tau = (t(z)%*%d)[1,1]
+  }
+  C = V%*%Z
+  C = C[,0:min(ncol(C), om)]
+  return(as.matrix(C))
+}
+
+continuum.ridge.res.fix = function(X, Y, C, lambda, gam, om){
+  #om: number of columns
+  n = nrow(X)
+  p = ncol(X)
+  X.mean = apply(X, 2, mean)
+  X.sd = apply(X, 2, sd)
+  X = sweep(X, 2, X.mean)
+  X = sweep(X, 2, X.sd, FUN = "/")
+  Y.mean = mean(Y)
+  Y.sd = sd(Y)
+  Y = sweep(matrix(Y), 2, Y.mean)
+  Y = sweep(matrix(Y), 2, Y.sd, FUN = "/")
+  
+  S = t(X)%*%X
+  s = t(X)%*%Y
+  m = min(n-1, p)
+  
+  e = eigen(S)$values[1:m]
+  E = diag(e)
+  V = eigen(S)$vectors[, seq(1,m)]
+  d = t(V)%*%s
+  B = E%*%t(V)%*%C
+  
+  SOLVE = function(x){
+    if (sum(dim(x))){
+      return(solve(x))
+    }else{
+      return(x)
+    }
+  }
+  
+  tau = 1
+  fn = function(rho){
+    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    #    q = tau*rho^(gam-1)*d
+    q = tau*rho*d
+    Mq = M%*%q
+    z = Mq/norm(Mq, "2")
+    return(t(z)%*%E%*%z + n*lambda - rho)
+  }
+  
+  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn)
+  rho = nleqslv.res$x
+  if (nleqslv.res$termcd != 1){
+    print(paste0("Warning! The value is ", as.character(fn(rho))))
+  }
+  
+  #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+  A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+  #  q = tau*rho^(gam-1)*d
+  q = tau*rho*d
+  Mq = M%*%q
+  Z = Mq/norm(Mq, "2")
+  B = E%*%cbind(t(V)%*%C, Z)
+  rho0 = rho
+  
+  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+    nleqslv.res = nleqslv(rho0, fn)
+    rho = nleqslv.res$x
+    if (nleqslv.res$termcd != 1){
+      print(paste0("Warning! The value is ", as.character(fn(rho))))
+      break
+    }
+    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+      break
+    }
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    #    q = tau*rho^(gam-1)*d
+    q = tau*rho*d
+    Mq = M%*%q
+    z = Mq/norm(Mq, "2")
+    Z = cbind(Z, z)
+    B = E%*%cbind(t(V)%*%C, Z)
+    rho0 = rho
+  }
+  C = V%*%Z
+  #  print(C)
+  C = C[,0:min(ncol(C), om)]
+  return(as.matrix(C))
+}
+
+continuum.int.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, maxiter = 1000, conv = 1e-6){
+  G = length(X.list)
+  X = do.call(rbind, X.list)
+  Y = do.call(rbind, Y.list)
+  p = ncol(X)
+  nrun = 0
+  converged = F
+  
+  Y.homo = Y
+  Y.homo.list = Y.list
+  C = matrix(0, p, rankJ)
+  Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
+  Cind_tot = do.call(cbind, Cind)
+  MSE = list()
+  U = list()
+  W = list()
+  
+  while (nrun < maxiter & !converged){
+    Clast = C
+    Cind_tot.last = Cind_tot
+    C = continuum.ridge.fix(X, Y.homo, lambda = lambda, gam = gam, om = rankJ)
+    U = list.append(U, C)
+    beta.C = C2beta(X, Y.homo, C, lambda = lambda)$coef
+    Yhat.homo.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.C)
+    MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.homo.list[[g]] - Yhat.homo.list[[g]])^2)))
+    Y.heter.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.homo.list[[g]])
+    Cind = lapply(1:G, function(g) continuum.ridge.res.fix(X.list[[g]], Y.heter.list[[g]], C, lambda = lambda, gam = gam, om = rankA[g]))
+    W = list.append(W, Cind)
+    Cind_tot = do.call(cbind, Cind)
+    beta.Cind = lapply(1:G, function(g) C2beta(X.list[[g]], Y.heter.list[[g]], Cind[[g]], lambda)$coef)
+    Yhat.heter.list = lapply(1:G, function(g) cbind(1, X.list[[g]])%*%beta.Cind[[g]])
+    MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.heter.list[[g]]-Yhat.heter.list[[g]])^2)))
+    Y.homo.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.heter.list[[g]])
+    Y.homo = do.call(rbind, Y.homo.list)
+    print(norm(Clast - C, type = "f"))
+    print(norm(Cind_tot.last - Cind_tot, type = "f"))
+    if (norm(Clast - C, type = "f") <= conv & norm(Cind_tot.last - Cind_tot, type = "f") <= conv) {
+      converged <- T
+    }
+    nrun = nrun + 1
+  }
+  if (converged) {
+    cat(paste("Algorithm converged after ", nrun, 
+              " iterations.\n"))
+  }
+  else {
+    cat(paste("Algorithm did not converge after ", 
+              nrun, " iterations.\n"))
+  }
+  MSE = do.call(rbind, MSE)
+  return(list(C = C, Cind = Cind, beta.C = beta.C, beta.Cind = beta.Cind, MSE = MSE, U = U, W = W))
+}
 
 
 
