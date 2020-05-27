@@ -15,11 +15,12 @@ library(methods)
 # source("~/Documents/GitHub/continuum/function/jive_continuum.R")
 # source("~/Documents/GitHub/continuum/function/cv_multigroup.R")
 
+current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
 source("./data/ADNI2/loaddata.R")
 source("./function/jive_continuum.R")
 source("./function/cv_multigroup.R")
-setwd("/pine/scr/p/e/peiyao/continuum/ADNI")
+setwd(current)
 
 set.seed(myseed)
 
