@@ -11,9 +11,15 @@ library(caret)
 library(glmnet)
 library(methods)
 
-source("~/Documents/GitHub/continuum/data/ADNI2/loaddata.R")
-source("~/Documents/GitHub/continuum/function/jive_continuum.R")
-source("~/Documents/GitHub/continuum/function/cv_multigroup.R")
+# source("~/Documents/GitHub/continuum/data/ADNI2/loaddata.R")
+# source("~/Documents/GitHub/continuum/function/jive_continuum.R")
+# source("~/Documents/GitHub/continuum/function/cv_multigroup.R")
+
+setwd("/nas/longleaf/home/peiyao/continuum/")
+source("./data/ADNI2/loaddata.R")
+source("./function/jive_continuum.R")
+source("./function/cv_multigroup.R")
+setwd("/pine/scr/p/e/peiyao/continuum/ADNI")
 
 set.seed(myseed)
 
@@ -137,7 +143,7 @@ MSE = list.append(MSE, sapply(1:G, function(g)
 print(do.call(rbind, MSE))
 
 file.name = "result.csv"
-write.table(c(myseed, as.vector(do.call(rbind, MSE))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
+write.table(t(c(myseed, as.vector(do.call(rbind, MSE)))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 # do.call(rbind, MSE)%*%sapply(X.test.list, function(X) nrow(X))/sum(sapply(X.test.list, function(X) nrow(X)))
 
 
