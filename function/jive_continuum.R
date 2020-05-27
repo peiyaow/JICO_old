@@ -188,8 +188,14 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
           }
         }
       }
-      ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
-      Cind[[g]] = ml.heter$C
+      
+      if (rankA[g]){
+        ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
+        Cind[[g]] = ml.heter$C
+      }
+      
+#      ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
+#      Cind[[g]] = ml.heter$C
     }
     W = list.append(W, Cind)
     
@@ -218,11 +224,15 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
           for (j in (1:G)[-g]) {
             temp[[g]] <- temp[[g]]%*%(diag(p) - Cind[[j]]%*%SOLVE(t(Cind[[j]])%*%Cind[[j]])%*%t(Cind[[j]]))
           }
-          # ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
-          # Cind[[g]] = ml.heter$C
         }
-        ml.heter = lapply(1:G, function(g) continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g]))
-        Cind = lapply(1:G, function(g) ml.heter[[g]]$C)
+        for (g in 1:G){
+          if (rankA[g]){
+            ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
+            Cind[[g]] = ml.heter$C
+          }
+        }
+#        ml.heter = lapply(1:G, function(g) continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g]))
+#        Cind = lapply(1:G, function(g) ml.heter[[g]]$C)
       }
     }
     
@@ -675,6 +685,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
   a = V%*%solve(E)^(1/2)%*%Z
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E))
 }
+
 
 continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   #om: number of columns

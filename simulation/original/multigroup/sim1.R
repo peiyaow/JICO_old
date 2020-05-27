@@ -1,6 +1,7 @@
 library(MASS)
 library(pls)
 library(pracma)
+library(glmnet)
 
 r = 2
 r1 = 2
