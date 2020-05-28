@@ -79,7 +79,11 @@ ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g
                                                   standardize = T, intercept = T))
 
 # my models
+
+# c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
+
 gam.list = c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
+#c(log(c(seq(exp(0.2), exp(1), length.out = 7))))
 
 # greedy selection of rankJ and rankA using 2 separate procedure
 ml.2step.list = lapply(gam.list, function(gam) cv.continnum.2step.separate(X.list, Y.list, lambda = 0, gam = gam, nfolds = 10, m1 = 10, m2 = 5))

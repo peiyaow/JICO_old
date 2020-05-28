@@ -1,6 +1,8 @@
 library(readr)
 # setwd("~/Documents/GitHub/continuum/data/ADNI2")
-# setwd("/nas/longleaf/home/peiyao/continuum")
+# X = as.matrix(read_table("X2.txt", col_names = F))
+# Y = as.matrix(read_table("Y2.txt", col_names = F))
+# label = as.ordered(read_table("label2.txt", col_names = F)$X1)
 
 X = as.matrix(read_table("/nas/longleaf/home/peiyao/continuum/data/ADNI2/X2.txt", col_names = F))
 Y = as.matrix(read_table("/nas/longleaf/home/peiyao/continuum/data/ADNI2/Y2.txt", col_names = F))

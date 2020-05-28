@@ -134,40 +134,41 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   Y.homo = Y
   Y.homo.list = Y.list
   X.heter.list = lapply(1:G, function(g) matrix(0, nrow = nrow(X.list[[g]]), ncol = p))
-#  C = matrix(0, p, rankJ)
   Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
 #  Cind_tot = do.call(cbind, Cind)
+  P = matrix(0, p, p )
   R = X
   R[,] = 0
+  
   r = Y
   r[,] = 0
-  MSEcurrent = 0
-  MSE = list()
+  
   U = list()
   W = list()
-  ct.homo = matrix(0, nrow = rankJ, ncol = 1)
-  ct.heter = lapply(1:G, function(g) matrix(0, nrow = rankA[g], ncol = 1))
+  
+  
+
+#  ct.homo = matrix(0, nrow = rankJ, ncol = 1)
+#  ct.heter = lapply(1:G, function(g) matrix(0, nrow = rankA[g], ncol = 1))
   
   while (nrun < maxiter & !converged){
     # initialization
     rlast = r
     Rlast = R
-    MSElast = MSEcurrent
-    ct.homo.last = ct.homo
-    ct.heter.last = ct.heter
+    
+    # ct.homo.last = ct.homo
+    # ct.heter.last = ct.heter
 
-#    Clast = C
-#    Cind_tot.last = Cind_tot
     X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])
     X.homo = do.call(rbind, X.homo.list)
     
-    # joint 
-    ml.homo = continuum.ridge.fix(X.homo, Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
+    # joint
+    ml.homo = continuum.ridge.fix(X.homo%*%(diag(p) - P), Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
     C = ml.homo$C
     U = list.append(U, C)
     
-    XC = X.homo%*%C
-    ct.homo = diag(t(XC)%*%XC)^gam*cor(XC, Y.homo)
+    # XC = X.homo%*%C
+    # ct.homo = diag(t(XC)%*%XC)^gam*cor(XC, Y.homo)
     
     beta.C = C2beta(X.homo, Y.homo, C, lambda = lambda)$beta
     Yhat.homo.list = lapply(1:G, function(g) X.homo.list[[g]]%*%beta.C)
@@ -178,7 +179,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     # individual
     temp = X.heter.list
     for (g in 1:G){
-      temp[[g]] <- temp[[g]]%*%(diag(p) - C%*%SOLVE(t(C)%*%C)%*%t(C))
+#      temp[[g]] <- temp[[g]]%*%(diag(p) - C%*%SOLVE(t(C)%*%C)%*%t(C))
       
       # orthogonalization
       if (orthIndiv){
@@ -193,25 +194,19 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
         ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
         Cind[[g]] = ml.heter$C
       }
-      
-#      ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
-#      Cind[[g]] = ml.heter$C
     }
     W = list.append(W, Cind)
+    Cind_tot = do.call(cbind, Cind)
+    P = Cind_tot%*%SOLVE(t(Cind_tot)%*%Cind_tot)%*%t(Cind_tot)
     
-    XC.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]])
-    ct.heter = lapply(1:G, function(g) diag(t(XC.list[[g]])%*%XC.list[[g]])^gam*cor(XC.list[[g]], Y.heter.list[[g]]))
-
-    #    Cind_tot = do.call(cbind, Cind)
+#    XC.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]])
+#    ct.heter = lapply(1:G, function(g) diag(t(XC.list[[g]])%*%XC.list[[g]])^gam*cor(XC.list[[g]], Y.heter.list[[g]]))
+    
     beta.Cind = lapply(1:G, function(g) C2beta(X.heter.list[[g]], Y.heter.list[[g]], Cind[[g]], lambda)$beta)
     Yhat.heter.list = lapply(1:G, function(g) X.heter.list[[g]]%*%beta.Cind[[g]])
     
-    # MSE
     r.list = lapply(1:G, function(g) Y.heter.list[[g]] - Yhat.heter.list[[g]])
     r = do.call(rbind, r.list)
-    MSEcurrent = sum(sapply(1:G, function(g) sum(r.list[[g]]^2)))/N
-    MSE = list.append(MSE, mean(r.list[[g]]^2))
-#    print(MSEcurrent)
     
     Y.homo.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.heter.list[[g]])
     Y.homo = do.call(rbind, Y.homo.list)
@@ -231,8 +226,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
             Cind[[g]] = ml.heter$C
           }
         }
-#        ml.heter = lapply(1:G, function(g) continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g]))
-#        Cind = lapply(1:G, function(g) ml.heter[[g]]$C)
       }
     }
     
@@ -244,10 +237,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     #  converged <- T
     # }
     
-#    print(abs(MSEcurrent - MSElast))
-    # if (abs(MSEcurrent - MSElast) <= conv){
-    #   converged <- T
-    # }
 
     if (gam > 10){
       if (!nrun%%10){
@@ -268,19 +257,13 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
       # }
       
       if (!nrun%%10){
-        print(norm(rlast - r, type = "f"))
+#        print(norm(rlast - r, type = "f"))
+        print(norm(r, type = "f"))
       }
       if (norm(rlast - r, type = "f") <= conv){
         converged <- T
       }
     }
-    
-    # if (!nrun%%10){
-    #   print(norm(rlast - r, type = "f"))
-    # }
-    # if (norm(rlast - r, type = "f") <= conv){
-    #   converged <- T
-    # }
     
     nrun = nrun + 1
   }
@@ -292,7 +275,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     cat(paste("Algorithm did not converge after ", 
               nrun, " iterations.\n"))
   }
-  MSE = do.call(rbind, MSE)
+
   beta.C0 = beta.C
   beta.Cind0 = beta.Cind
   beta.C = list()
@@ -303,7 +286,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     beta.Cind[[g]] = beta.Cind0[[g]]/scaleValues.X[[g]]*scaleValues.Y[[g]]
     intercept[[g]] = centerValues.Y[[g]] - t(beta.C[[g]])%*%centerValues.X[[g]] - t(beta.Cind[[g]])%*%centerValues.X[[g]]
   }
-  return(list(C = C, Cind = Cind, intercept = intercept, beta.C = beta.C, beta.Cind = beta.Cind, MSE = MSE, U = U, W = W, converged = converged,
+  return(list(C = C, Cind = Cind, intercept = intercept, beta.C = beta.C, beta.Cind = beta.Cind, U = U, W = W, converged = converged,
               J = X.homo.list, I = X.heter.list, nrun = nrun))
 }
 
@@ -590,29 +573,44 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
 #  Y = sweep(matrix(Y), 2, scaleValues.Y, FUN = "/")
   
   if (vertical){
-    S = t(X)%*%X
+    # S = t(X)%*%X
     s = t(X)%*%Y
-    e = eigen(S)$values
-    m = length(e[e > 1e-6])
-    e = e[1:m]
-#    m = min(n-G, p)
-#    e = eigen(S)$values[1:m]
+    
+    svd.X = svd(X)
+    d = svd.X$d
+    V = svd.X$v
+    m = length(d[d > 1e-5])
+    e = (d^2)[1:m]
     E = DIAG(e)
-    V = eigen(S)$vectors[, 1:m]
+    V = V[,1:m]
     d = t(V)%*%s
+
+    # e = eigen(S)$values
+    # m = length(e[e > 1e-10])
+    # e = e[1:m]
+    # E = DIAG(e)
+    # V = eigen(S)$vectors[, 1:m]
+    # d = t(V)%*%s
   }else{
-    S = X%*%t(X)
-#    m = min(n-G, p)
-    e = eigen(S)$values
-    m = length(e[e > 1e-6])
-    e = e[1:m]
-#    e = eigen(S)$values[1:m]
+    # S = X%*%t(X)
+    svd.tX = svd(t(X))
+    d = svd.tX$d
+    V = svd.tX$v
+    m = length(d[d > 1e-5])
+    e = (d^2)[1:m]
     E = DIAG(e)
-    V = eigen(S)$vectors[, 1:m]
+    V = V[,1:m]
     d = E^(1/2)%*%t(V)%*%Y
+
+    # e = eigen(S)$values
+    # m = length(e[e > 1e-6])
+    # e = e[1:m]
+    # E = DIAG(e)
+    # V = eigen(S)$vectors[, 1:m]
+    # d = E^(1/2)%*%t(V)%*%Y
   }
 
-  tau = 1
+  tau = sqrt(2/(e[1]+e[m]))
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
@@ -624,12 +622,12 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn, method = "Newton", control = list(maxit = 50))
+  nleqslv.res = nleqslv((e[1]+e[m])/2+n*lambda, fn, method = "Newton", global = "none", control = list(maxit = 150))
   rho = nleqslv.res$x
   if (nleqslv.res$termcd != 1){
     print(paste0("Warning! The value is ", as.character(fn(rho))))
     #     print(fn(rho, gam, e, V, d))
-    #     print(nleqslv.res$termcd)
+    print(nleqslv.res$termcd)
   }
   
   #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
@@ -654,22 +652,26 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
-    #    print(1)
-    #    print(rcond(t(B)%*%solve(A)%*%B))
-    nleqslv.res = nleqslv(rho0, fn, method = "Newton", control = list(maxit = 50))
+#  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+  while (ncol(Z) < om){
+    # print(1)
+    # print(rcond(t(B)%*%solve(A)%*%B))
+    
+    nleqslv.res = nleqslv(rho0, fn, method = "Newton", global = "none", control = list(maxit = 150))
     rho = nleqslv.res$x
     if (nleqslv.res$termcd != 1){
       print(paste0("Warning! The value is ", as.character(fn(rho))))
-      #      break
+      print(nleqslv.res$termcd)
     }
-    #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
+    
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    #    print(2)
-    #    print(rcond(t(B)%*%solve(A)%*%B))
-    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
-      break
-    }
+    
+    # print(2)
+    # print(rcond(t(B)%*%solve(A)%*%B))
+    
+    # if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+    #   break
+    # }
     M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
