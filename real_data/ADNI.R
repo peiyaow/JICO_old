@@ -41,6 +41,7 @@ label.test = matrix(label[-idtrain])
 
 label.level = levels(label)
 G = length(label.level)
+L = 50
 
 # X.train.mean = apply(X.train, 2, mean)
 # X.train.sd = apply(X.train, 2, sd)
@@ -67,7 +68,7 @@ ncomp.pls = selectNcomp(ml.pls, method = "randomization", plot = F)
 ml.pcr = pcr(Y~X, validation = "CV", center = T, scale = T)
 ncomp.pcr = selectNcomp(ml.pcr, method = "randomization", plot = F)
 
-ml.ridge = cv.glmnet(x = X, y = Y, alpha = 0, standardize = T, intercept = T)
+ml.ridge = cv.glmnet(x = X, y = Y, alpha = 0, standardize = T, intercept = T, nlambda = L-1)
 
 ml.pls.list = lapply(1:G, function(g) plsr(Y.list[[g]] ~ X.list[[g]], validation = "CV", center = T, scale = T))
 ncomp.pls.list = lapply(1:G, function(g) selectNcomp(ml.pls.list[[g]], method = "randomization", plot = F))
@@ -75,15 +76,15 @@ ncomp.pls.list = lapply(1:G, function(g) selectNcomp(ml.pls.list[[g]], method = 
 ml.pcr.list = lapply(1:G, function(g) pcr(Y.list[[g]]~X.list[[g]], validation = "CV", center = T, scale = T))
 ncomp.pcr.list = lapply(1:G, function(g) selectNcomp(ml.pcr.list[[g]], method = "randomization", plot = F))
 
-ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g]], alpha = 0, 
+ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g]], alpha = 0, nlambda = L-1,
                                                   standardize = T, intercept = T))
 
 # my models
 
 # c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
-L = 20
-gam.list = c(log(c(seq(exp(0), exp(1), length.out = L/2), seq(exp(1), exp(2), length.out = L/2)[-1])))
-#c(log(c(seq(exp(0.2), exp(1), length.out = 7))))
+gam.list = exp(seq(log(0.1), log(1.5), length.out = L-1))
+# gam.list = c(log(c(seq(exp(0), exp(1), length.out = L/2), seq(exp(1), exp(2), length.out = L/2)[-1])))
+# c(log(c(seq(exp(0.2), exp(1), length.out = 7))))
 
 # greedy selection of rankJ and rankA using 2 separate procedure
 ml.2step.list = lapply(gam.list, function(gam) cv.continnum.2step.separate(X.list, Y.list, lambda = 0, gam = gam, nfolds = 10, m1 = 10, m2 = 5))
