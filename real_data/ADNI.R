@@ -27,7 +27,7 @@ set.seed(myseed)
 n = dim(X)[1]
 p = dim(X)[2]
 
-idtrain = unlist(createDataPartition(label, times = 1, p = 3/4))
+idtrain = unlist(createDataPartition(label, times = 1, p = 4/5))
 idtest = (1:n)[-idtrain]
 
 X.train = X[idtrain,]
@@ -81,8 +81,8 @@ ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g
 # my models
 
 # c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
-
-gam.list = c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
+L = 20
+gam.list = c(log(c(seq(exp(0), exp(1), length.out = L/2), seq(exp(1), exp(2), length.out = L/2)[-1])))
 #c(log(c(seq(exp(0.2), exp(1), length.out = 7))))
 
 # greedy selection of rankJ and rankA using 2 separate procedure
@@ -112,7 +112,7 @@ for (ml in ml.2step.list){
     mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
 }
 MSE.2step = list.append(MSE.2step, MSE.2step[[ml.2step.best$ix]])
-MSE[1:8] = MSE.2step
+MSE[1:L] = MSE.2step
 
 MSE.iter = list()
 for (ml in ml.iter.list){
@@ -120,7 +120,7 @@ for (ml in ml.iter.list){
     mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
 }
 MSE.iter = list.append(MSE.iter, MSE.iter[[ml.iter.best$ix]])
-MSE[9:16] = MSE.iter
+MSE[L+(1:L)] = MSE.iter
 
 # global models
 ml = ml.pls
