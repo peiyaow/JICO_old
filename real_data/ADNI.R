@@ -80,22 +80,36 @@ ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g
                                                   standardize = T, intercept = T))
 
 # my models
-
-# c(log(c(seq(exp(0.5), exp(1), length.out = 4), seq(exp(1), exp(1.5), length.out = 4)[-1])))
 gam.list = exp(seq(log(0.1), log(1.5), length.out = L-1))
-# gam.list = c(log(c(seq(exp(0), exp(1), length.out = L/2), seq(exp(1), exp(2), length.out = L/2)[-1])))
-# c(log(c(seq(exp(0.2), exp(1), length.out = 7))))
+parameter.set = list()
+for (gam in gam.list){
+  ml.step1 = cv.continuum.step1(X.list, Y.list, lambda = 0, gam = gam, nfolds = 10, m = 5, 
+                                criteria = "scree")
+  rankJ = ml.step1$rankJ
+  ml.step2 = lapply(1:G, function(g) cv.continuum(X.list[[g]], Y.list[[g]], lambda = 0, gam = gam, nfolds = 10, m = 5, 
+                                                  criteria = "1se"))
+  rankA = sapply(ml.step2, function(ml) max(ml$rankA - rankJ, 0))
+  parameter = list(gam = gam, rankJ = rankJ, rankA = rankA)
+  parameter.set = list.append(parameter.set, parameter)
+}
 
 # greedy selection of rankJ and rankA using 2 separate procedure
-ml.2step.list = lapply(gam.list, function(gam) cv.continnum.2step.separate(X.list, Y.list, lambda = 0, gam = gam, nfolds = 10, m1 = 10, m2 = 5))
-parameter.set = lapply(ml.2step.list, function(ml) ml$parameter) # parameter set
+# ml.2step.list = lapply(gam.list, function(gam) cv.continnum.2step.separate(X.list, Y.list, lambda = 0, gam = gam, nfolds = 10, m1 = 10, m2 = 5))
+# parameter.set = lapply(ml.2step.list, function(ml) ml$parameter) # parameter set
 
 # tune best 2step model
 ml.2step.best = cv.continnum.2step(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, criteria = "min")
+ml.2step.list = list()
+for (parameter in parameter.set){
+  print(parameter)
+  ml.2step.list = list.append(ml.2step.list, 
+                              continuum.2step(X.list, Y.list, lambda = 0, 
+                                              gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA))
+}
+
 
 # tune best iterate model
 ml.iter.best = cv.continnum.iter(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 200, criteria = "min")
-
 ml.iter.list = list()
 for (parameter in parameter.set){
   print(parameter)

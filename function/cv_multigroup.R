@@ -1,3 +1,4 @@
+library(caret)
 continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, tune = TRUE){
   G = length(X.list)
   centerValues.X <- list()
@@ -119,6 +120,14 @@ cv.continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, nfolds = 10, 
   if (criteria =="min"){
     rankJ = which.min(rMSE) - 1
   }
+  
+  if (criteria == "scree"){
+    if (rMSE[1]/rMSE[2] < 1){
+      rankJ = 0
+    }else{
+      rankJ = which.max(rMSE[-(m+1)]/rMSE[-1])
+    }
+  }
   ml = continuum.step1(X.list, Y.list, lambda = lambda, gam = gam, m = rankJ, 
                        center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, tune = F)
   return(list(rMSE = rMSE, rankJ = rankJ, ml = ml))
@@ -175,6 +184,14 @@ cv.continuum.step2 = function(Xres, Yres, C, XOrigin, YOriginRes, lambda = 0, ga
   if (criteria == "min"){
     rankA = which.min(rMSE) - 1
   }
+  
+  if (criteria == "scree"){
+    if (rMSE[1]/rMSE[2] < 1){
+      rankA = 0
+    }else{
+      rankA = which.max(rMSE[-(m+1)]/rMSE[-1])
+    }
+  }
   ml = continuum.step2(Xres, Yres, C, lambda = lambda, gam = gam, m = rankA, centerValues.X, scaleValues.X, scaleValues.Y, tune = F)
   
   return(list(rMSE = rMSE, rankA = rankA, ml = ml))
@@ -202,7 +219,7 @@ cv.continnum.2step.separate = function(X.list, Y.list, lambda = 0, gam = 1, nfol
   intercept = lapply(1:G, function(g) ml.step1$ml$intercept[[g]] + ml.step2[[g]]$ml$intercept)
   beta.C = lapply(1:G, function(g) ml.step1$ml$beta[[g]])
   beta.Cind = lapply(1:G, function(g) ml.step2[[g]]$ml$beta)
-  return(list(intercept = intercept, beta.C = beta.C, beta.Cind = beta.Cind, parameter = list(gam = gam, rankJ = rankJ, rankA = rankA)))
+  return(list(intercept = intercept, beta.C = beta.C, beta.Cind = beta.Cind, ml.step1 = ml.step1, ml.step2 = ml.step2, parameter = list(gam = gam, rankJ = rankJ, rankA = rankA)))
 }
 
 cv.continnum.2step = function(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10,
@@ -355,6 +372,108 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
     parameter = parameter.set[[ix]]
   }
   return(list(rMSE = rMSE, MSE = MSE, ix = ix, parameter = parameter))
+}
+
+
+continuum = function(X, Y, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, tune = TRUE){
+  n = nrow(X)
+  p = ncol(X)
+  
+  if (center.X){
+    centerValues.X = apply(X, 2, mean)
+  }else{
+    centerValues.X = rep(0, p)
+  }
+  if (scale.X){
+    scaleValues.X = norm(X, type = "f") 
+  }else{
+    scaleValues.X = 1
+  }
+  X = sweep(X, 2, centerValues.X)
+  X = X/scaleValues.X
+  
+  if (center.Y){
+    centerValues.Y = mean(Y)
+  }else{
+    centerValues.Y = 0
+  }
+  if (scale.Y){
+    scaleValues.Y = norm(Y, type = "f") #*sqrt(N)
+  }else{
+    scaleValues.Y = 1
+  }
+  
+  Y = sweep(matrix(Y), 2, centerValues.Y)
+  Y = sweep(matrix(Y), 2, scaleValues.Y, FUN = "/")
+  
+  ml = continuum.ridge.fix(X = X, Y = Y, lambda = lambda, gam = gam, om = m)
+  C = ml$C
+  if (tune){
+    beta.list = lapply(0:m, function(mm) C2beta(X = X, Y = Y, C = C[,0:mm], lambda = lambda)$beta)
+    
+    betaOrigin = list()
+    intercept = list()
+    for (i in 1:(m+1)){
+      betaOrigin[[i]] = beta.list[[i]]/scaleValues.X*scaleValues.Y
+      intercept[[i]] = centerValues.Y - t(betaOrigin[[i]])%*%centerValues.X
+    }
+  }else{ # only compute one beta
+    beta.C = C2beta(X = X, Y = Y, C = C, lambda = lambda)$beta
+    # Yhat.homo.list = lapply(1:G, function(g) X.list[[g]]%*%beta.C)
+    # Y.heter.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.homo.list[[g]])
+    # X.homo.list = lapply(1:G, function(g) X.list[[g]]%*%C%*%SOLVE(t(C)%*%C)%*%t(C))
+    # X.heter.list = lapply(1:G, function(g) X.list[[g]] - X.homo.list[[g]])
+    betaOrigin = beta.C/scaleValues.X*scaleValues.Y
+    intercept = centerValues.Y - t(betaOrigin)%*%centerValues.X
+  }
+  return(list(beta = betaOrigin, intercept = intercept, C = C, 
+              centerValues.X = centerValues.X, centerValues.Y = centerValues.Y, 
+              scaleValues.X = scaleValues.X, scaleValues.Y = scaleValues.Y))
+}
+
+
+cv.continuum = function(X, Y, lambda = 0, gam = 1, nfolds = 10, m = 5, plot = F, criteria = "min",
+                              center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE){
+  flds = createFolds(Y, k = nfolds, list = TRUE, returnTrain = FALSE)
+  MSE.list = list()
+  for (k in 1:nfolds){
+    X.train = X[unlist(flds[-k]), ]
+    X.val = X[unlist(flds[k]), ]
+    Y.train = matrix(Y[unlist(flds[-k])])
+    Y.val = matrix(Y[unlist(flds[k])])
+    
+    ml = continuum(X.train, Y.train, lambda = lambda, gam = gam, m = m, 
+                   center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y)
+    Yhat.list = lapply(1:(m+1), function(mm) as.numeric(ml$intercept[[mm]]) + X.val%*%ml$beta[[mm]])
+    MSE.list[[k]] = sapply(1:(m+1), function(mm) mean((Y.val - Yhat.list[[mm]])^2))
+  }
+  
+  MSE = do.call(rbind, MSE.list)
+  rMSE = apply(MSE, 2, function(x) mean(sqrt(x)))
+  if (plot){
+    plot(rMSE)
+  }
+  if (criteria == "1se"){
+    absBest = min(rMSE)
+    MSEsd = apply(MSE, 2, function(x) sd(sqrt(x)))/sqrt(nfolds)
+    rankA = min(which((rMSE - MSEsd) < absBest)) - 1
+  }
+  if (criteria == "min"){
+    rankA = which.min(rMSE) - 1
+  }
+  
+  if (criteria == "scree"){
+    if (rMSE[1]/rMSE[2] < 1){
+      rankA = 0
+    }else{
+      rankA = which.max(rMSE[-(m+1)]/rMSE[-1])
+    }
+  }
+  ml = continuum(X, Y, lambda = lambda, gam = gam, m = rankA, 
+                 center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y,
+                 tune = F)
+  
+  return(list(rMSE = rMSE, rankA = rankA, ml = ml))
 }
 
 
