@@ -21,6 +21,8 @@ source("./function/cv_multigroup.R")
 load("./simulation/original/multigroup/pls.RData")
 setwd(current)
 
+set.seed(myseed)
+
 L = 50
 
 # training data
