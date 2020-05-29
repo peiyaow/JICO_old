@@ -149,11 +149,11 @@ MSE = list.append(MSE, sapply(1:G, function(g) mean((predict(ml, newx = X.test.l
 
 # group models
 ml = ml.pls.list
-MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = ncomp.pls.list[[g]]+1)[,,1]
+MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = ncomp.pls.list[[g]])[,,1]
 )^2)))
 
 ml = ml.pcr.list
-MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = ncomp.pcr.list[[g]]+1)[,,1]
+MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = ncomp.pcr.list[[g]])[,,1]
 )^2)))
 
 ml = ml.ridge.list
