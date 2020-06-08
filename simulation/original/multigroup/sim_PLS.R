@@ -15,7 +15,7 @@ library(MASS)
 
 current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
-source("./data/ADNI2/loaddata.R")
+# source("./data/ADNI2/loaddata.R")
 source("./function/jive_continuum.R")
 source("./function/cv_multigroup.R")
 load("./simulation/original/multigroup/pls.RData")

@@ -90,6 +90,7 @@ continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, m, center.X = TR
 cv.continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, nfolds = 10, m = 5, 
                               center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, plot = F, criteria = c("min", "1se")){
   G = length(X.list)
+  set.seed(111)
   flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds, list = TRUE, returnTrain = FALSE))
   MSE.list = list()
   for (k in 1:nfolds){
@@ -122,15 +123,18 @@ cv.continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, nfolds = 10, 
   }
   
   if (criteria == "scree"){
-    if (rMSE[1]/rMSE[2] < 1){
+    rMSEratio = rMSE[-(m+1)]/rMSE[-1]
+    rankJ = which.max(rMSEratio)
+    if (rMSEratio[rankJ] < 1){
       rankJ = 0
-    }else{
-      rankJ = which.max(rMSE[-(m+1)]/rMSE[-1])
+    }
+    if (plot){
+      plot(rMSEratio)
     }
   }
   ml = continuum.step1(X.list, Y.list, lambda = lambda, gam = gam, m = rankJ, 
                        center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, tune = F)
-  return(list(rMSE = rMSE, rankJ = rankJ, ml = ml))
+  return(list(rMSE = rMSE, rankJ = rankJ, ml = ml, MSE = MSE))
 }
 
 continuum.step2 = function(Xres, Yres, C, lambda = 0, gam = 1, m = 5, centerValues.X, scaleValues.X, scaleValues.Y, tune = T){
@@ -337,7 +341,8 @@ continuum.2step = function(X.list, Y.list, lambda = 0, gam = 1, rankJ, rankA,
 
 
 cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 100,
-                              center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, plot = F, criteria = c("min", "1se")){
+                             center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = T, 
+                             plot = F, criteria = c("min", "1se")){
   G = length(X.list)
   flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds, list = TRUE, returnTrain = FALSE))
   MSE.list = list()
@@ -351,7 +356,7 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
     ml.list = lapply(parameter.set, function(parameter) 
       continuum.multigroup.iter(X.train.list, Y.train.list, lambda = lambda, maxiter = maxiter,     
                       gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA, 
-                      center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y))
+                      center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, orthIndiv = orthIndiv))
     Yhat.list = lapply(ml.list, function(ml) 
       do.call(rbind, lapply(1:G, function(g) as.numeric(ml$intercept[[g]]) + X.val.list[[g]]%*%ml$beta.C[[g]] + X.val.list[[g]]%*%ml$beta.Cind[[g]])))
     MSE.list[[k]] = sapply(Yhat.list, function(Yhat) mean((Y.val - Yhat)^2))
@@ -434,6 +439,7 @@ continuum = function(X, Y, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TR
 
 cv.continuum = function(X, Y, lambda = 0, gam = 1, nfolds = 10, m = 5, plot = F, criteria = "min",
                               center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE){
+  set.seed(111)
   flds = createFolds(Y, k = nfolds, list = TRUE, returnTrain = FALSE)
   MSE.list = list()
   for (k in 1:nfolds){
@@ -473,7 +479,7 @@ cv.continuum = function(X, Y, lambda = 0, gam = 1, nfolds = 10, m = 5, plot = F,
                  center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y,
                  tune = F)
   
-  return(list(rMSE = rMSE, rankA = rankA, ml = ml))
+  return(list(rMSE = rMSE, rankA = rankA, ml = ml, MSE = MSE))
 }
 
 
