@@ -40,8 +40,8 @@ alpha2 = rep(.5, r2) #OLS: 0
 
 X1 = mvrnorm(n1, rep(0, p), diag(p))
 X2 = mvrnorm(n2, rep(0, p), diag(p))
-
 X = rbind(X1, X2)
+
 q = min(n, p)
 q1 = min(n1, p)
 q2 = min(n2, p)
