@@ -94,57 +94,82 @@ for (i in 1:nrow(RANK)){
 ml.2step.best = cv.continnum.2step(X.list, Y.list, lambda = 0, parameter.set, 
                                    # center.X = F, scale.X = T, center.Y = F, scale.Y = T, 
                                    nfolds = 10, criteria = "min")
-ml.2step.list = list()
-for (parameter in parameter.set){
-  print(parameter)
-  ml.2step.list = list.append(ml.2step.list, 
-                              continuum.2step(X.list, Y.list, lambda = 0, 
-                                              # center.X = F, scale.X = T, center.Y = F, scale.Y = T, 
-                                              gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA))
-}
 
-# tune best iterate model not orthogonal
-ml.iter.best = cv.continnum.iter(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 200, criteria = "min", orthIndiv = F)
-ml.iter.list = list()
-for (parameter in parameter.set){
-  print(parameter)
-  ml.iter.list = list.append(ml.iter.list, 
-                             continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
-                                                       gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA,
-                                                       orthIndiv = F))
-}
-
-# -------------------------------- testing --------------------------------
-MSE.2step = list()
-for (ml in ml.2step.list){
-  MSE.2step = list.append(MSE.2step, sapply(1:G, function(g) 
-    mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
-}
-MSE.2step = list.append(MSE.2step, MSE.2step[[ml.2step.best$ix]])
+print("Best 2step parameter is:")
+print(do.call(c, ml.2step.best$parameter))
 
 file.name = "rank_2step.csv"
 write.table(t(c(myseed, do.call(c, ml.2step.best$parameter))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 
-file.name = "result_2step.csv"
-write.table(t(c(myseed, as.vector(do.call(rbind, MSE.2step)))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
+ml.2step = continuum.2step(X.list, Y.list, lambda = 0, 
+                           gam = ml.2step.best$parameter$gam, 
+                           rankJ = ml.2step.best$parameter$rankJ, 
+                           rankA = ml.2step.best$parameter$rankA)
 
-MSE.iter = list()
-for (ml in ml.iter.list){
-  MSE.iter = list.append(MSE.iter, sapply(1:G, function(g) 
-    mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
-}
-MSE.iter = list.append(MSE.iter, MSE.iter[[ml.iter.best$ix]])
-# MSE[(L+1)*nrow(RANK)+1:((L+1)*nrow(RANK))] = MSE.iter
+# ml.2step.list = list()
+# for (parameter in parameter.set){
+#   print(parameter)
+#   ml.2step.list = list.append(ml.2step.list,
+#                               continuum.2step(X.list, Y.list, lambda = 0,
+#                                               # center.X = F, scale.X = T, center.Y = F, scale.Y = T,
+#                                               gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA))
+# }
+
+# tune best iterate model not orthogonal
+ml.iter.best = cv.continnum.iter(X.list, Y.list, lambda = 0, parameter.set, 
+                                 nfolds = 10, maxiter = 200, criteria = "min", 
+                                 orthIndiv = F)
+print("Best iter parameter is:")
+print(do.call(c, ml.iter.best$parameter))
 
 file.name = "rank_iter.csv"
 write.table(t(c(myseed, do.call(c, ml.iter.best$parameter))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 
-file.name = "result_iter.csv"
-write.table(t(c(myseed, as.vector(do.call(rbind, MSE.iter)))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
+ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
+                                    gam = ml.iter.best$parameter$gam, 
+                                    rankJ = ml.iter.best$parameter$rankJ, 
+                                    rankA = ml.iter.best$parameter$rankA,
+                                    orthIndiv = F)
+
+# ml.iter.list = list()
+# for (parameter in parameter.set){
+#   print(parameter)
+#   ml.iter.list = list.append(ml.iter.list,
+#                              continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
+#                                                        gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA,
+#                                                        orthIndiv = F))
+# }
+
+# -------------------------------- testing --------------------------------
+# MSE.2step = list()
+# for (ml in ml.2step.list){
+#   MSE.2step = list.append(MSE.2step, sapply(1:G, function(g) 
+#     mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
+# }
+# MSE.2step = list.append(MSE.2step, MSE.2step[[ml.2step.best$ix]])
+# 
+# file.name = "result_2step.csv"
+# write.table(t(c(myseed, as.vector(do.call(rbind, MSE.2step)))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
+# 
+# MSE.iter = list()
+# for (ml in ml.iter.list){
+#   MSE.iter = list.append(MSE.iter, sapply(1:G, function(g) 
+#     mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
+# }
+# MSE.iter = list.append(MSE.iter, MSE.iter[[ml.iter.best$ix]])
+# # MSE[(L+1)*nrow(RANK)+1:((L+1)*nrow(RANK))] = MSE.iter
+# 
+# file.name = "result_iter.csv"
+# write.table(t(c(myseed, as.vector(do.call(rbind, MSE.iter)))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 
 MSE = list()
-MSE = list.append(MSE, MSE.2step[[ml.2step.best$ix]])
-MSE = list.append(MSE, MSE.iter[[ml.iter.best$ix]])
+ml = ml.2step
+MSE = list.append(MSE, sapply(1:G, function(g) 
+  mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
+
+ml = ml.iter
+MSE = list.append(MSE, sapply(1:G, function(g) 
+  mean((as.numeric(ml$intercept[[g]])+ X.test.list[[g]]%*%ml$beta.C[[g]] + X.test.list[[g]]%*%ml$beta.Cind[[g]] - Y.test.list[[g]])^2)))
 
 # global models
 ml = ml.pls
@@ -167,8 +192,6 @@ ml = ml.ridge.list
 MSE = list.append(MSE, sapply(1:G, function(g) 
   mean((Y.test.list[[g]] - predict(ml[[g]], newx = X.test.list[[g]], s = ml[[g]]$lambda.min))^2)))
 
-print(do.call(c, ml.2step.best$parameter))
-print(do.call(c, ml.iter.best$parameter))
 print(do.call(rbind, MSE))
 
 file.name = "result.csv"
