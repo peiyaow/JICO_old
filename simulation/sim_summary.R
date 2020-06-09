@@ -1,8 +1,9 @@
 G = 2
+result = as.matrix(result)
 n = nrow(result)
 result.list = list()
 for (i in 1:n){
-  result.list[[i]] = matrix(result[i,-1], ncol = G)
+  result.list[[i]] = matrix(as.vector(result[i,-1]), ncol = G)
 }
 
 result.mean = matrix(apply(result, 2, mean)[-1], ncol = G)[c(L, (2*L):(2*L+6)), ]

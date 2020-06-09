@@ -90,7 +90,7 @@ continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, m, center.X = TR
 cv.continuum.step1 = function(X.list, Y.list, lambda = 0, gam = 1, nfolds = 10, m = 5, 
                               center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, plot = F, criteria = c("min", "1se")){
   G = length(X.list)
-  set.seed(111)
+#  set.seed(111)
   flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds, list = TRUE, returnTrain = FALSE))
   MSE.list = list()
   for (k in 1:nfolds){
@@ -439,7 +439,7 @@ continuum = function(X, Y, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TR
 
 cv.continuum = function(X, Y, lambda = 0, gam = 1, nfolds = 10, m = 5, plot = F, criteria = "min",
                               center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE){
-  set.seed(111)
+#  set.seed(111)
   flds = createFolds(Y, k = nfolds, list = TRUE, returnTrain = FALSE)
   MSE.list = list()
   for (k in 1:nfolds){

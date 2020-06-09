@@ -615,7 +615,7 @@ continuum.2step.v2 = function(X.list, Y.list, lambda, gam, rankJ, rankA, scale.X
   return(list(C = C, Cind = Cind, intercept = intercept, beta.C = beta.C, beta.Cind = beta.Cind, MSE = MSE))
 }
 
-continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
+continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbose = FALSE){
   #om: number of columns
   n = nrow(X)
   p = ncol(X)
@@ -682,7 +682,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
   # }
   
   rho = nleqslv.res$x
-  if (nleqslv.res$termcd != 1){
+  if (nleqslv.res$termcd != 1 && verbose){
     print(paste0("Warning! The value is ", as.character(fn(rho))))
     #     print(fn(rho, gam, e, V, d))
     print(nleqslv.res$termcd)
@@ -716,7 +716,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE){
     # print(rcond(t(B)%*%solve(A)%*%B))
     nleqslv.res = nleqslv(rho0, fn, method = "Newton", global = "none", control = list(maxit = 150))
     rho = nleqslv.res$x
-    if (nleqslv.res$termcd != 1){
+    if (nleqslv.res$termcd != 1 && verbose){
       print(paste0("Warning! The value is ", as.character(fn(rho))))
       print(nleqslv.res$termcd)
     }
