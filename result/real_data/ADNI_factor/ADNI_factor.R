@@ -57,7 +57,7 @@ X.train.list = lapply(1:n_label, function(ix) sweep(X.train.list[[ix]], 2, X.tra
 X.test.list = lapply(1:n_label, function(ix) sweep(X.test.list[[ix]], 2, X.train.mean[[ix]]))
 
 # ------------------------------- ALPHA -----------------------------------------
-X2U.list = lapply(1:n_label, function(ix) X2U1(X.train.list[[ix]], plot = T))
+X2U.list = lapply(1:n_label, function(ix) X2U1(X.train.list[[ix]], plot = F))
 H.list = lapply(X2U.list, function(list) list$H)
 K.list = lapply(X2U.list, function(list) list$K)
 P.list = lapply(X2U.list, function(list) list$P)
@@ -80,9 +80,9 @@ U.train = do.call(rbind, U.train.list)
 HY.train.list = lapply(1:n_label, function(ix) H.list[[ix]]%*%Y.train.list[[ix]])
 HY.train = do.call(c, HY.train.list)
 
-ridge.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0, standardize = T)
-EN.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0.5, standardize = T)
-lasso.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 1, standardize = T)
+ridge.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0, standardize = F)
+EN.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0.5, standardize = F)
+lasso.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 1, standardize = F)
 
 HYhat.test.ridge.OLS.list = lapply(1:n_label, function(ix) predict(ridge.OLS.U, s=ridge.OLS.U$lambda.min, U.test.list[[ix]]))
 HYhat.test.EN.OLS.list = lapply(1:n_label, function(ix) predict(EN.OLS.U, s=EN.OLS.U$lambda.min, U.test.list[[ix]]))
@@ -122,9 +122,9 @@ U.train = do.call(rbind, U.train.list)
 HY.train.list = lapply(1:n_label, function(ix) H.list[[ix]]%*%Y.train.list[[ix]])
 HY.train = do.call(c, HY.train.list)
 
-ridge.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0, standardize = T)
-EN.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0.5, standardize = T)
-lasso.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 1, standardize = T)
+ridge.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0, standardize = F)
+EN.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 0.5, standardize = F)
+lasso.OLS.U = cv.glmnet(x = U.train, y = HY.train, alpha = 1, standardize = F)
 
 # HYhat.test.OLS.list = lapply(1:n_label, function(ix) U.test.list[[ix]]%*%beta.OLS.U)
 HYhat.test.ridge.OLS.list = lapply(1:n_label, function(ix) predict(ridge.OLS.U, s=ridge.OLS.U$lambda.min, U.test.list[[ix]]))
