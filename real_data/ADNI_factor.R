@@ -10,6 +10,7 @@ library(caret)
 library(glmnet)
 require(methods)
 
+current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
 source("./data/ADNI2/loaddata.R")
 setwd("/nas/longleaf/home/peiyao/alpha/")
