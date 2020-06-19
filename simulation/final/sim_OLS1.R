@@ -11,7 +11,6 @@ library(rlist)
 library(glmnet)
 library(methods)
 library(pls)
-library(pracma)
 
 current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
@@ -34,21 +33,21 @@ alpha = rep(1, r)
 alpha1 = rep(0, r1) #OLS: 0
 alpha2 = rep(0, r2) #OLS: 0 
 
-Q = randortho(p)
-V = matrix(Q[,1:r], ncol = r)
-V1 = matrix(Q[,r+(1:r1)], ncol = r1)
-V2 = matrix(Q[,r+r1+(1:r2)], ncol = r2)
+# Q = randortho(p)
+# V = matrix(Q[,1:r], ncol = r)
+# V1 = matrix(Q[,r+(1:r1)], ncol = r1)
+# V2 = matrix(Q[,r+r1+(1:r2)], ncol = r2)
 
 X1 = mvrnorm(n1, rep(0, p), diag(p))
 X2 = mvrnorm(n2, rep(0, p), diag(p))
 X = rbind(X1, X2)
 
-# q = min(n, p)/2
-# q1 = min(n1, p)/2
-# q2 = min(n2, p)/2
-# V = svd(X)$v[,1:q]%*%rep(1/sqrt(q), q)
-# V1 = svd(X1%*%(diag(p) - V%*%t(V)))$v[,1:q1]%*%rep(1/sqrt(q1), q1)
-# V2 = svd(X2%*%(diag(p) - V%*%t(V)))$v[,1:q2]%*%rep(1/sqrt(q2), q2)
+q = min(n, p)
+q1 = min(n1, p)
+q2 = min(n2, p)
+V = svd(X)$v[,1:q]%*%rep(1/sqrt(q), q)
+V1 = svd(X1%*%(diag(p) - V%*%t(V)))$v[,1:q1]%*%rep(1/sqrt(q1), q1)
+V2 = svd(X2%*%(diag(p) - V%*%t(V)))$v[,1:q2]%*%rep(1/sqrt(q2), q2)
 
 e1 = rnorm(n1)*.2
 Y1 = X1%*%V%*%alpha + X1%*%V1%*%alpha1 + e1

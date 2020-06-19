@@ -135,7 +135,7 @@ legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0",
              rgb(255, 0, 255, 255, maxColorValue=255)), lty = seq(1,5), cex=1)
 
 
-############## overall ###############3
+############## overall ###############
 result = as.matrix(result)
 n = nrow(result)
 L = 50
@@ -152,6 +152,8 @@ y_min = min(MSE)
 
 AA_mean = MSE
 AA_sd = se
+
+# ------------------------------- PCR/PLS -------------------------------
 
 #100
 plot(a, AA_mean[1:(L+1)], type = "l", 
@@ -184,7 +186,7 @@ polygon(c(a, rev(a)), c(AA_mean[4*(L+1)+1:(L+1)]+AA_sd[4*(L+1)+1:(L+1)], rev(AA_
 lines(a, AA_mean[4*(L+1)+1:(L+1)],
       col = "gray", lwd = 2, lty = 5)
 
-legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
+legend("topleft", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
                                       "r = 2, r1 = 0, r2 = 0", 
                                       "r = 1, r1 = 1, r2 = 1",
                                       "r = 0, r1 = 1, r2 = 1",
@@ -194,3 +196,98 @@ legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0",
              "red",
              "gray",
              "gray"), lty = c(3,2,1,4,5), lwd = 2, cex=1.3)
+
+
+
+# ------------------------------- OLS2 -------------------------------
+
+#100
+plot(a, AA_mean[1:(L+1)], type = "l", 
+     ylim = c(y_min, y_max), 
+     lwd = 2, lty = 3, col = "gray", xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
+polygon(c(a, rev(a)), c(AA_mean[1:(L+1)]+AA_sd[1:(L+1)], rev(AA_mean[1:(L+1)]-AA_sd[1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+
+#200
+polygon(c(a, rev(a)), c(AA_mean[(L+1)+1:(L+1)]+AA_sd[(L+1)+1:(L+1)], rev(AA_mean[(L+1)+1:(L+1)]-AA_sd[(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[(L+1)+1:(L+1)],
+      col = "gray", lwd = 2, lty = 2)
+
+#111
+polygon(c(a, rev(a)), c(AA_mean[2*(L+1)+1:(L+1)]+AA_sd[2*(L+1)+1:(L+1)], rev(AA_mean[2*(L+1)+1:(L+1)]-AA_sd[2*(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[2*(L+1)+1:(L+1)],
+      col = "gray", lwd = 2, lty = 4)
+
+#022
+polygon(c(a, rev(a)), c(AA_mean[4*(L+1)+1:(L+1)]+AA_sd[4*(L+1)+1:(L+1)], rev(AA_mean[4*(L+1)+1:(L+1)]-AA_sd[4*(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[4*(L+1)+1:(L+1)],
+      col = "gray", lwd = 2, lty = 5)
+
+#011
+polygon(c(a, rev(a)), c(AA_mean[3*(L+1)+1:(L+1)]+AA_sd[3*(L+1)+1:(L+1)], rev(AA_mean[3*(L+1)+1:(L+1)]-AA_sd[3*(L+1)+1:(L+1)])), 
+        col = rgb(255, 0, 0, 50, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[3*(L+1)+1:(L+1)],
+      col = "red", lwd = 2, lty = 1)
+
+
+legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
+                                      "r = 2, r1 = 0, r2 = 0", 
+                                      "r = 1, r1 = 1, r2 = 1",
+                                      "r = 0, r1 = 1, r2 = 1",
+                                      "r = 0, r1 = 2, r2 = 2"),
+       col=c("gray", 
+             "gray", 
+             "gray",
+             "red",
+             "gray"), lty = c(3,2,4,1,5), lwd = 2, cex=1.3)
+
+
+#200
+plot(a, AA_mean[(L+1)+1:(L+1)], ylim = c(y_min, y_max), 
+     type = "l", 
+     col = "gray", lwd = 2, lty = 2,
+     xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
+polygon(c(a, rev(a)), c(AA_mean[(L+1)+1:(L+1)]+AA_sd[(L+1)+1:(L+1)], rev(AA_mean[(L+1)+1:(L+1)]-AA_sd[(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+
+#111
+polygon(c(a, rev(a)), c(AA_mean[2*(L+1)+1:(L+1)]+AA_sd[2*(L+1)+1:(L+1)], rev(AA_mean[2*(L+1)+1:(L+1)]-AA_sd[2*(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[2*(L+1)+1:(L+1)],
+      lwd = 2, lty = 3, col = "gray")
+
+#011
+polygon(c(a, rev(a)), c(AA_mean[3*(L+1)+1:(L+1)]+AA_sd[3*(L+1)+1:(L+1)], rev(AA_mean[3*(L+1)+1:(L+1)]-AA_sd[3*(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[3*(L+1)+1:(L+1)],
+      col = "gray", lwd = 2, lty = 4)
+
+#022
+polygon(c(a, rev(a)), c(AA_mean[4*(L+1)+1:(L+1)]+AA_sd[4*(L+1)+1:(L+1)], rev(AA_mean[4*(L+1)+1:(L+1)]-AA_sd[4*(L+1)+1:(L+1)])), 
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
+lines(a, AA_mean[4*(L+1)+1:(L+1)],
+      col = "gray", lwd = 2, lty = 5)
+
+#100
+lines(a, AA_mean[1:(L+1)], ylim = c(y_min, y_max), 
+      type = "l", 
+      col = "red", lwd = 2, lty = 1,
+      xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
+polygon(c(a, rev(a)), c(AA_mean[1:(L+1)]+AA_sd[1:(L+1)], rev(AA_mean[1:(L+1)]-AA_sd[1:(L+1)])), 
+        col = rgb(255, 0, 0, 50, maxColorValue=255), border = FALSE)
+
+legend("topleft", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
+                                     "r = 2, r1 = 0, r2 = 0", 
+                                     "r = 1, r1 = 1, r2 = 1",
+                                     "r = 0, r1 = 1, r2 = 1",
+                                     "r = 0, r1 = 2, r2 = 2"),
+       col=c("red", 
+             "gray", 
+             "gray",
+             "gray",
+             "gray"), lty = 1:5, lwd = 2, cex=1.3)
+
+
