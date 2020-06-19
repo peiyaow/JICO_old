@@ -123,9 +123,8 @@ se = matrix(apply(result, 2, sd)[-1], ncol = G)/sqrt(N)
 ix.MSEse = do.call(c, lapply(1:G, function(g) c(1, 1+G) + g-1))
 B = round(cbind(MSE, se)[,ix.MSEse], digits = 3)
 
-A.factor = A
-B.factor = B
-
+A.factor = A[c(1, 4),] # only ridge result
+B.factor = B[c(1, 4),] # only ridge result
 
 # combine jico and factor
 A = rbind(A.jico[1:3,], A.factor, A.jico[-(1:3),])
