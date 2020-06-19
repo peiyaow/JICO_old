@@ -244,6 +244,7 @@ legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0",
              "red",
              "gray"), lty = c(3,2,4,1,5), lwd = 2, cex=1.3)
 
+# ------------------------------- OLS1 -------------------------------
 
 #200
 plot(a, AA_mean[(L+1)+1:(L+1)], ylim = c(y_min, y_max), 
