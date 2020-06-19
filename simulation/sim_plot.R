@@ -156,41 +156,41 @@ AA_sd = se
 #100
 plot(a, AA_mean[1:(L+1)], type = "l", 
      ylim = c(y_min, y_max), 
-     lwd = 2, lty = 1, col = "green", xlab = "a", ylab = "MSE")
+     lwd = 2, lty = 3, col = "gray", xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
 polygon(c(a, rev(a)), c(AA_mean[1:(L+1)]+AA_sd[1:(L+1)], rev(AA_mean[1:(L+1)]-AA_sd[1:(L+1)])), 
-        col = rgb(0, 255, 0, 20, maxColorValue=255), border = FALSE)
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
 
 #200
 polygon(c(a, rev(a)), c(AA_mean[(L+1)+1:(L+1)]+AA_sd[(L+1)+1:(L+1)], rev(AA_mean[(L+1)+1:(L+1)]-AA_sd[(L+1)+1:(L+1)])), 
-        col = rgb(255, 0, 0, 20, maxColorValue=255), border = FALSE)
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
 lines(a, AA_mean[(L+1)+1:(L+1)],
-      col = "red", lwd = 2, lty = 2)
+      col = "gray", lwd = 2, lty = 2)
 
 #111
 polygon(c(a, rev(a)), c(AA_mean[2*(L+1)+1:(L+1)]+AA_sd[2*(L+1)+1:(L+1)], rev(AA_mean[2*(L+1)+1:(L+1)]-AA_sd[2*(L+1)+1:(L+1)])), 
-        col = rgb(0, 0, 255, 20, maxColorValue=255), border = FALSE)
+        col = rgb(255, 0, 0, 50, maxColorValue=255), border = FALSE)
 lines(a, AA_mean[2*(L+1)+1:(L+1)],
-      col = "blue", lwd = 2, lty = 3)
+      col = "red", lwd = 2, lty = 1)
 
 #011
 polygon(c(a, rev(a)), c(AA_mean[3*(L+1)+1:(L+1)]+AA_sd[3*(L+1)+1:(L+1)], rev(AA_mean[3*(L+1)+1:(L+1)]-AA_sd[3*(L+1)+1:(L+1)])), 
-        col = rgb(0, 255, 255, 20, maxColorValue=255), border = FALSE)
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
 lines(a, AA_mean[3*(L+1)+1:(L+1)],
-      col = rgb(0, 255, 255, 255, maxColorValue=255), lwd = 2, lty = 4)
+      col = "gray", lwd = 2, lty = 4)
 
 #022
 polygon(c(a, rev(a)), c(AA_mean[4*(L+1)+1:(L+1)]+AA_sd[4*(L+1)+1:(L+1)], rev(AA_mean[4*(L+1)+1:(L+1)]-AA_sd[4*(L+1)+1:(L+1)])), 
-        col = rgb(255, 0, 255, 20, maxColorValue=255), border = FALSE)
+        col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
 lines(a, AA_mean[4*(L+1)+1:(L+1)],
-      col = rgb(255, 0, 255, 255, maxColorValue=255), lwd = 2, lty = 5)
+      col = "gray", lwd = 2, lty = 5)
 
-legend("topleft", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
+legend("topright", inset=.1, legend=c("r = 1, r1 = 0, r2 = 0", 
                                       "r = 2, r1 = 0, r2 = 0", 
                                       "r = 1, r1 = 1, r2 = 1",
                                       "r = 0, r1 = 1, r2 = 1",
                                       "r = 0, r1 = 2, r2 = 2"),
-       col=c("green", 
-             "red", 
-             "blue",
-             rgb(0, 255, 255, 255, maxColorValue=255),
-             rgb(255, 0, 255, 255, maxColorValue=255)), lty = seq(1,5), cex=1.2)
+       col=c("gray", 
+             "gray", 
+             "red",
+             "gray",
+             "gray"), lty = c(3,2,1,4,5), lwd = 2, cex=1.3)
