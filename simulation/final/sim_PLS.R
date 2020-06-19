@@ -42,9 +42,9 @@ X1 = mvrnorm(n1, rep(0, p), diag(p))
 X2 = mvrnorm(n2, rep(0, p), diag(p))
 X = rbind(X1, X2)
 
-q = min(n, p)
-q1 = min(n1, p)
-q2 = min(n2, p)
+q = min(n, p)/2
+q1 = min(n1, p)/2
+q2 = min(n2, p)/2
 V = svd(X)$v[,1:q]%*%rep(1/sqrt(q), q)
 V1 = svd(X1%*%(diag(p) - V%*%t(V)))$v[,1:q1]%*%rep(1/sqrt(q1), q1)
 V2 = svd(X2%*%(diag(p) - V%*%t(V)))$v[,1:q2]%*%rep(1/sqrt(q2), q2)
@@ -85,33 +85,33 @@ gam.list[L+1] = 1e10
 ml.100.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.100.list = list.append(ml.100.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 1000, gam = gam, rankJ = 1, rankA = c(0, 0),
+  ml.100.list = list.append(ml.100.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 1, rankA = c(0, 0),
                                                            center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.200.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.200.list = list.append(ml.200.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 1000, gam = gam, rankJ = 2, rankA = c(0, 0),
+  ml.200.list = list.append(ml.200.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 2, rankA = c(0, 0),
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.111.list = list()
 for (gam in gam.list){
-  ml.111.list = list.append(ml.111.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 1000, gam = gam, rankJ = 1, rankA = c(1, 1),
+  ml.111.list = list.append(ml.111.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 1, rankA = c(1, 1),
                                      center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.011.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.011.list = list.append(ml.011.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 1000, gam = gam, rankJ = 0, rankA = c(1, 1),
+  ml.011.list = list.append(ml.011.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 0, rankA = c(1, 1),
                                                            center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.022.list = list()
 for (gam in gam.list){
-  ml.022.list = list.append(ml.022.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 1000, gam = gam, rankJ = 0, rankA = c(2, 2),
+  ml.022.list = list.append(ml.022.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 0, rankA = c(2, 2),
                                                            center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 

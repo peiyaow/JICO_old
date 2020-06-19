@@ -57,7 +57,7 @@ X.train.list = lapply(1:n_label, function(ix) sweep(X.train.list[[ix]], 2, X.tra
 X.test.list = lapply(1:n_label, function(ix) sweep(X.test.list[[ix]], 2, X.train.mean[[ix]]))
 
 # ------------------------------- ALPHA -----------------------------------------
-X2U.list = lapply(1:n_label, function(ix) X2U1(X.train.list[[ix]], plot = F))
+X2U.list = lapply(1:n_label, function(ix) X2U1(X.train.list[[ix]], plot = T))
 H.list = lapply(X2U.list, function(list) list$H)
 K.list = lapply(X2U.list, function(list) list$K)
 P.list = lapply(X2U.list, function(list) list$P)
