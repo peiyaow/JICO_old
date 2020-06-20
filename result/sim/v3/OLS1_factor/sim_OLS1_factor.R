@@ -80,7 +80,7 @@ Y.test.list = list(Y1, Y2)
 
 
 # ------------------------------- ALPHA -----------------------------------------
-X2U.list = lapply(1:G, function(ix) X2U2(X.list[[ix]], K = r.list[[ix]], plot = F))
+X2U.list = lapply(1:G, function(ix) X2U1(X.list[[ix]], K = 10, plot = F))
 H.list = lapply(X2U.list, function(list) list$H)
 K.list = lapply(X2U.list, function(list) list$K)
 P.list = lapply(X2U.list, function(list) list$P)
