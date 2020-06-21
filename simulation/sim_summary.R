@@ -70,6 +70,7 @@ c(se[2*(L+1)+26], se[-(1:(5*(L+1)))])
 ###################################
 # jico
 result = as.matrix(result)
+L = 50
 n1 = 50
 n2 = 50
 n = n1 + n2
@@ -123,8 +124,8 @@ se = matrix(apply(result, 2, sd)[-1], ncol = G)/sqrt(N)
 ix.MSEse = do.call(c, lapply(1:G, function(g) c(1, 1+G) + g-1))
 B = round(cbind(MSE, se)[,ix.MSEse], digits = 3)
 
-A.factor = A[c(1,4),] # only ridge 1,1 result
-B.factor = B[c(1,4),] # only ridge 1,1 result
+A.factor = A[1,] # only ridge 1,1 result
+B.factor = B[1,] # only ridge 1,1 result
 
 # combine jico and factor
 A = rbind(A.jico[1:3,], A.jico[-(1:3),], A.factor)

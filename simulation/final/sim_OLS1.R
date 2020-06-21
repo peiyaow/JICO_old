@@ -15,6 +15,7 @@ library(pls)
 current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
 source("./function/jive_continuum.R")
+source("./function/PLS.R")
 setwd(current)
 set.seed(myseed)
 
@@ -84,33 +85,33 @@ gam.list[L+1] = 1e10
 ml.100.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.100.list = list.append(ml.100.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 1, rankA = c(0, 0),
+  ml.100.list = list.append(ml.100.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500, gam = gam, rankJ = 1, rankA = c(0, 0),
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.200.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.200.list = list.append(ml.200.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 2, rankA = c(0, 0),
+  ml.200.list = list.append(ml.200.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500, gam = gam, rankJ = 2, rankA = c(0, 0),
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.111.list = list()
 for (gam in gam.list){
-  ml.111.list = list.append(ml.111.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 1, rankA = c(1, 1),
+  ml.111.list = list.append(ml.111.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500, gam = gam, rankJ = 1, rankA = c(1, 1), 
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.011.list = list()
 for (gam in gam.list){
   print(gam)
-  ml.011.list = list.append(ml.011.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 0, rankA = c(1, 1),
+  ml.011.list = list.append(ml.011.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500, gam = gam, rankJ = 0, rankA = c(1, 1),
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
 ml.022.list = list()
 for (gam in gam.list){
-  ml.022.list = list.append(ml.022.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300, gam = gam, rankJ = 0, rankA = c(2, 2),
+  ml.022.list = list.append(ml.022.list, continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500, gam = gam, rankJ = 0, rankA = c(2, 2),
                                                                    center.X = F, scale.X = F, center.Y = F, scale.Y = F, orthIndiv = F))
 }
 
@@ -162,10 +163,10 @@ ml = ml.ridge
 MSE = list.append(MSE, sapply(1:G, function(g) mean((predict(ml, newx = X.test.list[[g]], s = ml.ridge$lambda.min) - Y.test.list[[g]])^2)))
 
 ml = ml.pls
-MSE = list.append(MSE, sapply(1:G, function(g) mean((predict(ml, newdata = X.test.list[[g]], ncomp = r)[,,1] - Y.test.list[[g]])^2)))
+MSE = list.append(MSE, sapply(1:G, function(g) mean((predict.wrapper(ml, X.test.list[[g]], r)- Y.test.list[[g]])^2)))
 
 ml = ml.pcr
-MSE = list.append(MSE, sapply(1:G, function(g) mean((predict(ml, newdata = X.test.list[[g]], ncomp = r)[,,1] - Y.test.list[[g]])^2)))
+MSE = list.append(MSE, sapply(1:G, function(g) mean((predict.wrapper(ml, X.test.list[[g]], r)- Y.test.list[[g]])^2)))
 
 # group models
 ml = ml.ridge.list
@@ -173,12 +174,10 @@ MSE = list.append(MSE, sapply(1:G, function(g)
   mean((Y.test.list[[g]] - predict(ml[[g]], newx = X.test.list[[g]], s = ml[[g]]$lambda.min))^2)))
 
 ml = ml.pls.list
-MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = r + r.list[[g]])[,,1]
-)^2)))
+MSE = list.append(MSE, sapply(1:G, function(g) mean((predict.wrapper(ml[[g]], X.test.list[[g]], r)- Y.test.list[[g]])^2)))
 
 ml = ml.pcr.list
-MSE = list.append(MSE, sapply(1:G, function(g) mean((Y.test.list[[g]] - predict(ml[[g]], newdata = X.test.list[[g]], ncomp = r + r.list[[g]])[,,1]
-)^2)))
+MSE = list.append(MSE, sapply(1:G, function(g) mean((predict.wrapper(ml[[g]], X.test.list[[g]], r)- Y.test.list[[g]])^2)))
 
 MSE = do.call(rbind, MSE)
 # row.names(MSE) = c("iter.OLS", "iter.PLS", "iter.PCR", "global.ridge", "global.PLS", 
