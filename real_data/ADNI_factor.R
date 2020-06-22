@@ -12,7 +12,7 @@ require(methods)
 
 current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
-source("./data/ADNI2/loaddata.R")
+source("./data/ADNI2/loaddata_alpha.R")
 setwd("/nas/longleaf/home/peiyao/alpha/")
 source("./function/main_function.R")
 setwd(current)

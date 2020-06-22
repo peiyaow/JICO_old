@@ -159,9 +159,10 @@ AA_sd = se
 png("PLS.png", width=1000, height=800)
 
 #100
+par(cex = 1.7, cex.lab = 1.2, mar = c(5, 4, 4, 2) + 0.1, lwd = 2)
 plot(a, AA_mean[1:(L+1)], type = "l", 
      ylim = c(y_min, y_max), 
-     lwd = 2, lty = 3, col = "gray", cex.lab = 1.3,
+     lwd = 2, lty = 3, col = "gray", # cex.lab = 1.5,
      xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
 polygon(c(a, rev(a)), c(AA_mean[1:(L+1)]+AA_sd[1:(L+1)], rev(AA_mean[1:(L+1)]-AA_sd[1:(L+1)])), 
         col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
@@ -199,15 +200,15 @@ legend("topleft", inset=.1, legend=c( "K = 1, K1 = 0, K2 = 0",
              "gray", 
              "red",
              "gray",
-             "gray"), lty = c(3,2,1,4,5), lwd = 2, cex=1.3)
+             "gray"), lty = c(3,2,1,4,5), lwd = 2)
 dev.off()
 # ------------------------------- OLS2 -------------------------------
 png("OLS2.png", width=1000, height=800)
-
+par(cex = 1.7, cex.lab = 1.2, mar = c(5, 4, 4, 2) + 0.1, lwd = 2)
 #100
 plot(a, AA_mean[1:(L+1)], type = "l", 
      ylim = c(y_min, y_max), 
-     lwd = 2, lty = 3, col = "gray", cex.lab = 1.3,
+     lwd = 2, lty = 3, col = "gray", #cex.lab = 1.3,
      xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
 polygon(c(a, rev(a)), c(AA_mean[1:(L+1)]+AA_sd[1:(L+1)], rev(AA_mean[1:(L+1)]-AA_sd[1:(L+1)])), 
         col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
@@ -248,15 +249,16 @@ legend("topright", inset=.1, legend=c("K = 1, K1 = 0, K2 = 0",
              "gray", 
              "gray",
              "red",
-             "gray"), lty = c(3,2,4,1,5), lwd = 2, cex=1.3)
+             "gray"), lty = c(3,2,4,1,5), lwd = 2)#, cex=1.3)
 dev.off()
 # ------------------------------- OLS1 -------------------------------
 png("OLS1.png", width=1000, height=800)
+par(cex = 1.7, cex.lab = 1.2, mar = c(5, 4, 4, 2) + 0.1, lwd = 2)
 
 #200
 plot(a, AA_mean[(L+1)+1:(L+1)], ylim = c(y_min, y_max), 
      type = "l", 
-     col = "gray", lwd = 2, lty = 2, cex.lab = 1.3,
+     col = "gray", lwd = 2, lty = 2, #cex.lab = 1.3,
      xlab = expression(paste("a = ", gamma, "/(1+", gamma, ")")), ylab = "MSE")
 polygon(c(a, rev(a)), c(AA_mean[(L+1)+1:(L+1)]+AA_sd[(L+1)+1:(L+1)], rev(AA_mean[(L+1)+1:(L+1)]-AA_sd[(L+1)+1:(L+1)])), 
         col = rgb(220, 220, 220, 80, maxColorValue=255), border = FALSE)
@@ -295,6 +297,6 @@ legend("topleft", inset=.1, legend=c("K = 1, K1 = 0, K2 = 0",
              "gray", 
              "gray",
              "gray",
-             "gray"), lty = 1:5, lwd = 2, cex=1.3)
+             "gray"), lty = 1:5, lwd = 2)#, cex=1.3)
 dev.off()
 

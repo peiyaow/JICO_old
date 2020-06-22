@@ -120,7 +120,7 @@ ml.ridge = cv.glmnet(x = X, y = Y, alpha = 0, standardize = F, intercept = F)
 ml.pls = plsr(Y~X, validation = "CV", center = F, scale = F)
 ncomp.pls = selectNcomp(ml.pls, method = "randomization", plot = F)
 
-ml.pcr = pcr(Y~X, validation = "CV", center = F, scale = F)
+ml.pcr = pcr(Y~X, validation = "CV", center = F, scale = F, method = "simpls")
 ncomp.pcr = selectNcomp(ml.pcr, method = "randomization", plot = F)
 
 ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g]], alpha = 0, 
