@@ -17,7 +17,7 @@ selection = !((label == 4) & (Y >= 36))
 X = X[selection,]
 Y = Y[selection]
 label = label[selection]
-boxplot(Y~label)
+# boxplot(Y~label)
 
 
 
