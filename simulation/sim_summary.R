@@ -1,3 +1,4 @@
+# PCR PLS
 # jico
 result = as.matrix(result)
 L = 50
@@ -129,8 +130,8 @@ se = matrix(apply(result, 2, sd)[-1], ncol = G)/sqrt(N)
 ix.MSEse = do.call(c, lapply(1:G, function(g) c(1, 1+G) + g-1))
 B = round(cbind(MSE, se)[,ix.MSEse], digits = 3)
 
-A.factor = A[c(1,4),] # only ridge 1,1 result
-B.factor = B[c(1,4),] # only ridge 1,1 result
+A.factor = A[4,] # only ridge 1,1 result
+B.factor = B[4,] # only ridge 1,1 result
 
 # combine jico and factor
 A = rbind(A.jico[1:3,], A.jico[-(1:3),], A.factor)
@@ -145,6 +146,10 @@ printt = D[, do.call(c, lapply(1:(ncol.D/2), function(i) c(i,(i+ncol.D/2))))]
 for (i in 1: nrow(printt)){
   cat(c("& ", printt[i,]), sep = "", fill = T)
 }
+
+
+
+
 
 # OLS2
 # jico
@@ -202,8 +207,8 @@ se = matrix(apply(result, 2, sd)[-1], ncol = G)/sqrt(N)
 ix.MSEse = do.call(c, lapply(1:G, function(g) c(1, 1+G) + g-1))
 B = round(cbind(MSE, se)[,ix.MSEse], digits = 3)
 
-A.factor = A[c(1,4),] # only ridge 1,1 result
-B.factor = B[c(1,4),] # only ridge 1,1 result
+A.factor = A[1,] # only ridge 1,1 result
+B.factor = B[1,] # only ridge 1,1 result
 
 # combine jico and factor
 A = rbind(A.jico[1:3,], A.jico[-(1:3),], A.factor)
