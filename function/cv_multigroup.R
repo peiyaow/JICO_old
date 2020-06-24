@@ -311,6 +311,15 @@ continuum.2step = function(X.list, Y.list, lambda = 0, gam = 1, rankJ, rankA,
   X = do.call(rbind, X.list)
   Y = do.call(rbind, Y.list)
   
+  if (gam == 0){
+    rankJ = min(1, rankJ)
+    if (rankJ){
+      rankA = rep(0, G)
+    }else{
+      rankA = sapply(rankA, function(r) min(1, r))
+    }
+  }
+  
   ml.homo = continuum.ridge.fix(X = X, Y = Y, lambda = lambda, gam = gam, om = rankJ)
   C = ml.homo$C
   beta.C = C2beta(X, Y, C, lambda = lambda)$beta

@@ -409,6 +409,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     X.heter.list = I.initial
   }
   
+  C = matrix(0, p, rankJ)
   Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
   P = matrix(0, p, p)
   R = X
@@ -435,17 +436,20 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     X.homo = do.call(rbind, X.homo.list)
     
     # joint
-    ml.homo = continuum.ridge.fix(X.homo%*%(diag(p) - P), Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
-    #    ml.homo = continuum.ridge.fix(X.homo, Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
-    
-    C = ml.homo$C
+    if (rankJ){
+      if (gam == 1e10){
+        ml.homo = svd(X.homo%*%(diag(p) - P), nu = rankJ, nv = rankJ)
+        C = ml.homo$v
+      }else{
+        ml.homo = continuum.ridge.fix(X.homo%*%(diag(p) - P), Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
+        #    ml.homo = continuum.ridge.fix(X.homo, Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
+        C = ml.homo$C
+      }
+    }
     U = list.append(U, C)
     
     XC = X.homo%*%C
-    ct.homo = diag(t(XC)%*%XC)^(gam-1)*(t(XC)%*%Y.homo)^2
-    # if (!nrun%%10){
-    #   print(ct.homo)
-    # }
+    ct.homo = (diag(t(XC)%*%XC)^(gam-1))*(t(XC)%*%Y.homo)^2
     
     beta.C = C2beta(X.homo, Y.homo, C, lambda = lambda)$beta
     Yhat.homo.list = lapply(1:G, function(g) X.homo.list[[g]]%*%beta.C)
@@ -457,26 +461,25 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     temp = X.heter.list
     for (g in 1:G){
       tempC = C
-      #      tempC = matrix(, nrow = p, ncol = 0)
-      #      temp[[g]] <- temp[[g]]%*%(diag(p) - C%*%SOLVE(t(C)%*%C)%*%t(C))
       # orthogonalization
       if (orthIndiv){
         if (nrun > 0){
           for (j in (1:G)[-g]){
             tempC = cbind(tempC, Cind[[j]])
-            #            temp[[g]] <- temp[[g]]%*%(diag(p) - Cind[[j]]%*%SOLVE(t(Cind[[j]])%*%Cind[[j]])%*%t(Cind[[j]]))
           }
         }
       }
       temp[[g]] <- temp[[g]]%*%(diag(p) - tempC%*%SOLVE(t(tempC)%*%tempC)%*%t(tempC))
       if (rankA[g]){
-        ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
-        Cind[[g]] = ml.heter$C
+        if (gam == 1e10){
+          ml.heter = svd(temp[[g]], nu = rankA[g], nv = rankA[g])
+          Cind[[g]] = ml.heter$v
+        }else{
+          ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
+          Cind[[g]] = ml.heter$C
+        }
       }
     }
-    # ml.heter = lapply(1:G, function(g)
-    #   continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g]))
-    # Cind = lapply(1:G, function(g) ml.heter[[g]]$C)
     
     W = list.append(W, Cind)
     Cind_tot = do.call(cbind, Cind)
@@ -484,7 +487,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     
     XC.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]])
     ct.heter = lapply(1:G, function(g) 
-      diag(t(XC.list[[g]])%*%XC.list[[g]])^(gam-1)*(t(XC.list[[g]])%*%Y.heter.list[[g]])^2)
+      diag((t(XC.list[[g]])%*%XC.list[[g]])^(gam-1))*(t(XC.list[[g]])%*%Y.heter.list[[g]])^2)
     
     beta.Cind = lapply(1:G, function(g) C2beta(X.heter.list[[g]], Y.heter.list[[g]], Cind[[g]], lambda)$beta)
     Yhat.heter.list = lapply(1:G, function(g) X.heter.list[[g]]%*%beta.Cind[[g]])
@@ -524,33 +527,15 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
         converged <- T
       }
     }else{
-      #      B1 = norm(ct.homo.last, type = "f")
-      #      B2 = lapply(1:G, function(g) norm(ct.heter.last[[g]], type = "f"))
-      #      CT1 = norm(ct.homo.last - ct.homo, type = "f")/B1
-      #      CT2 = sapply(1:G, function(g) norm(ct.heter.last[[g]] - ct.heter[[g]], type = "f")/B2[[g]])
-      
       CT1 = (ct.homo - ct.homo.last)/ct.homo.last
       CT2 = lapply(1:G, function(g) as.vector((ct.heter[[g]]-ct.heter.last[[g]])/ct.heter.last[[g]]))
-      
       CT = c(CT1, do.call(c, CT2))
-      
       if (!nrun%%10){
         print(c(ct.homo, do.call(c, ct.heter)))
-        #        print(CT)
       }
       if (max(abs(CT), na.rm = T) <= conv){
         converged <- T
       }
-      # if (CT1 <= conv & sum(CT2) <= conv) {
-      #  converged <- T
-      # }
-      
-      # if (!nrun%%10){
-      #   print(norm(r, type = "f"))
-      # }
-      # if (norm(rlast - r, type = "f") <= conv){
-      #   converged <- T
-      # }
     }
     
     nrun = nrun + 1
