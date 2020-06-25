@@ -72,7 +72,7 @@ N = nrow(result)
 result.list = list()
 MSE.list = list()
 for (i in 1:N){
-  result.list[[i]] = matrix(result[i,-1], ncol = G)
+  result.list[[i]] = matrix(result[i,-1], ncol = G)[c(1,2,5,3,4,8,6,7),]
   MSE.list[[i]] = matrix(result[i,-1], ncol = G)%*%c(n1, n2, n3)/n
 }
 
