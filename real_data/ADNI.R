@@ -18,7 +18,7 @@ library(methods)
 current = getwd()
 setwd("/nas/longleaf/home/peiyao/continuum/")
 source("./data/ADNI2/loaddata.R")
-load("./data/ADNI2/rank2.RData")
+load("./data/ADNI2/rank.RData")
 source("./function/jive_continuum.R")
 source("./function/cv_multigroup.R")
 source("./function/PLS.R")
@@ -76,8 +76,12 @@ ml.ridge.list = lapply(1:G, function(g) cv.glmnet(x = X.list[[g]], y = Y.list[[g
 
 # my models
 # parameters
-RANK = RANK[!RANK[,1]==0,] # remove some rank candidates with joint rank = 0
-a = seq(0, 1, length.out = L+1)
+# RANK = RANK[!RANK[,1]==0,] # remove some rank candidates with joint rank = 0
+# a = seq(0, 1, length.out = L+1)
+# gam.list = a/(1-a)
+# gam.list[L+1] = 1e10
+
+a = seq(0.2, 0.75, length.out = L)
 gam.list = a/(1-a)
 gam.list[L+1] = 1e10
 
@@ -121,7 +125,7 @@ ml.2step = continuum.2step(X.list, Y.list, lambda = 0,
 
 # tune best iterate model not orthogonal
 ml.iter.best = cv.continnum.iter(X.list, Y.list, lambda = 0, parameter.set, 
-                                 nfolds = 10, maxiter = 200, criteria = "min", 
+                                 nfolds = 10, maxiter = 500, criteria = "min", 
                                  orthIndiv = F)
 print("Best iter parameter is:")
 print(do.call(c, ml.iter.best$parameter))
@@ -129,7 +133,7 @@ print(do.call(c, ml.iter.best$parameter))
 file.name = "rank_iter.csv"
 write.table(t(c(myseed, do.call(c, ml.iter.best$parameter))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 
-ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
+ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 500,
                                     gam = ml.iter.best$parameter$gam, 
                                     rankJ = ml.iter.best$parameter$rankJ, 
                                     rankA = ml.iter.best$parameter$rankA,

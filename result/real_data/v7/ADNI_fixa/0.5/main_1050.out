@@ -1,0 +1,1368 @@
+myseed=1050 
+
+Attaching package: ‘pls’
+
+The following object is masked from ‘package:stats’:
+
+    loadings
+
+Loading required package: lattice
+Loading required package: ggplot2
+Registered S3 methods overwritten by 'ggplot2':
+  method         from 
+  [.quosures     rlang
+  c.quosures     rlang
+  print.quosures rlang
+
+Attaching package: ‘caret’
+
+The following object is masked from ‘package:pls’:
+
+    R2
+
+Loading required package: Matrix
+Loading required package: foreach
+Loaded glmnet 2.0-18
+
+Parsed with column specification:
+cols(
+  .default = col_double()
+)
+See spec(...) for full column specifications.
+Parsed with column specification:
+cols(
+  X1 = col_double()
+)
+Parsed with column specification:
+cols(
+  X1 = col_double()
+)
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.110204e-05
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001357409
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05 7.616185e-06
+Algorithm converged after  2  iterations.
+[1] 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 6.635574e-05
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05 6.635574e-05
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 6.635574e-05 7.616185e-06
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05 7.616185e-06 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 6.635574e-05 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05 6.635574e-05 7.616185e-06
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 6.635574e-05 7.616185e-06 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 1.340198e-05 6.635574e-05 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 6.635574e-05 7.616185e-06 1.357409e-04
+Algorithm converged after  2  iterations.
+[1] 4.110204e-05 6.635574e-05 1.357409e-04 7.000721e-05
+Algorithm converged after  2  iterations.
+[1] 0.000597495
+Algorithm converged after  2  iterations.
+[1] 5.974950e-04 1.179225e-05
+Algorithm converged after  7  iterations.
+[1] 5.974950e-04 1.178114e-05
+Algorithm converged after  8  iterations.
+[1] 0.0005974950 0.0001506921
+[1] 0.0008275897 0.0002736415
+Algorithm converged after  12  iterations.
+[1] 5.974950e-04 1.179225e-05 8.685178e-06
+[1] 7.865546e-04 1.289116e-05 6.282172e-06
+Algorithm converged after  17  iterations.
+[1] 5.974950e-04 1.178114e-05 4.268587e-06
+Algorithm converged after  10  iterations.
+[1] 5.974950e-04 1.506921e-04 8.729242e-06
+[1] 9.724551e-04 2.442570e-04 1.100227e-05
+Algorithm converged after  13  iterations.
+[1] 5.974950e-04 1.179225e-05 1.178114e-05
+Algorithm converged after  9  iterations.
+[1] 5.974950e-04 1.179225e-05 1.506921e-04
+[1] 0.0009377748 0.0000168119 0.0003648958
+Algorithm converged after  12  iterations.
+[1] 5.974950e-04 1.178114e-05 1.506921e-04
+[1] 8.479537e-04 1.240034e-05 2.488480e-04
+Algorithm converged after  11  iterations.
+[1] 5.974950e-04 1.179225e-05 8.685178e-06 1.178114e-05
+[1] 8.564744e-04 1.402804e-05 9.759906e-06 2.133500e-05
+Algorithm converged after  15  iterations.
+[1] 5.974950e-04 1.179225e-05 8.685178e-06 1.506921e-04
+[1] 1.053889e-03 1.389269e-05 9.259227e-06 2.851595e-04
+Algorithm converged after  12  iterations.
+[1] 5.974950e-04 1.179225e-05 1.178114e-05 4.268587e-06
+Algorithm converged after  10  iterations.
+[1] 5.974950e-04 1.179225e-05 1.506921e-04 8.729242e-06
+[1] 1.355033e-03 1.572608e-05 3.512697e-04 1.382518e-05
+[1] 1.356105e-03 1.573157e-05 3.515597e-04 1.383375e-05
+Algorithm converged after  22  iterations.
+[1] 5.974950e-04 1.178114e-05 4.268587e-06 1.506921e-04
+[1] 7.925319e-04 1.338352e-05 4.542302e-06 2.229956e-04
+Algorithm converged after  11  iterations.
+[1] 5.974950e-04 1.178114e-05 1.506921e-04 8.729242e-06
+[1] 1.044427e-03 1.628037e-05 2.629415e-04 1.141419e-05
+Algorithm converged after  14  iterations.
+[1] 5.974950e-04 1.179225e-05 1.178114e-05 1.506921e-04
+[1] 9.739649e-04 1.558728e-05 1.089553e-05 3.381203e-04
+Algorithm converged after  12  iterations.
+[1] 0.0005974950 0.0001062652
+Algorithm converged after  2  iterations.
+[1] 5.974950e-04 1.062652e-04 1.474379e-05
+Algorithm converged after  9  iterations.
+[1] 5.974950e-04 1.062652e-04 1.489245e-05
+[1] 6.904414e-04 3.236252e-05 4.008065e-05
+Algorithm converged after  11  iterations.
+[1] 5.974950e-04 1.062652e-04 5.587594e-06
+[1] 0.0007501734 0.0001024020 0.0006272082
+[1] 0.0007506335 0.0001025889 0.0006286299
+Algorithm converged after  23  iterations.
+[1] 5.974950e-04 1.062652e-04 1.474379e-05 4.129367e-06
+[1] 7.007424e-04 6.499865e-05 2.000536e-05 5.224110e-06
+Algorithm converged after  15  iterations.
+[1] 5.974950e-04 1.062652e-04 1.489245e-05 3.763370e-06
+[1] 7.127726e-04 2.434810e-05 2.934678e-05 4.616742e-06
+[1] 7.148792e-04 2.465007e-05 3.011351e-05 4.582963e-06
+[1] 7.152357e-04 2.451782e-05 3.018302e-05 4.571718e-06
+[1] 7.152981e-04 2.447649e-05 3.018996e-05 4.569121e-06
+[1] 7.153111e-04 2.446663e-05 3.019106e-05 4.568535e-06
+[1] 7.153140e-04 2.446439e-05 3.019129e-05 4.568404e-06
+[1] 7.153146e-04 2.446388e-05 3.019134e-05 4.568374e-06
+[1] 7.153148e-04 2.446377e-05 3.019135e-05 4.568367e-06
+Algorithm converged after  89  iterations.
+[1] 5.974950e-04 1.062652e-04 5.587594e-06 2.748916e-06
+[1] 6.686420e-04 5.095518e-05 3.617389e-04 7.331549e-06
+[1] 8.656349e-04 5.038526e-05 7.392950e-04 8.161796e-06
+[1] 8.708030e-04 5.038075e-05 7.498961e-04 8.182597e-06
+[1] 8.709434e-04 5.038064e-05 7.501845e-04 8.183161e-06
+Algorithm converged after  46  iterations.
+[1] 5.974950e-04 1.062652e-04 1.474379e-05 1.489245e-05
+[1] 7.688549e-04 2.467340e-05 1.948444e-05 2.622655e-05
+Algorithm converged after  20  iterations.
+[1] 5.974950e-04 1.062652e-04 1.474379e-05 5.587594e-06
+[1] 9.339033e-04 2.421905e-04 3.034624e-05 3.321584e-05
+[1] 9.313045e-04 2.410997e-04 3.026512e-05 3.295630e-05
+Algorithm converged after  27  iterations.
+[1] 5.974950e-04 1.062652e-04 1.489245e-05 5.587594e-06
+[1] 7.078464e-04 8.613908e-05 2.973295e-05 1.054137e-05
+[1] 7.080216e-04 8.588482e-05 2.969059e-05 1.049216e-05
+[1] 7.081032e-04 8.591013e-05 2.969457e-05 1.049729e-05
+[1] 7.081188e-04 8.591520e-05 2.969537e-05 1.049834e-05
+[1] 7.081218e-04 8.591617e-05 2.969553e-05 1.049854e-05
+[1] 7.081224e-04 8.591636e-05 2.969556e-05 1.049858e-05
+Algorithm converged after  65  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 5.037608e-05
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001283922
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05 3.152852e-06
+Algorithm converged after  2  iterations.
+[1] 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 8.869521e-05
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05 8.869521e-05
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 8.869521e-05 3.152852e-06
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05 3.152852e-06 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 8.869521e-05 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05 8.869521e-05 3.152852e-06
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 8.869521e-05 3.152852e-06 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 1.268721e-05 8.869521e-05 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 8.869521e-05 3.152852e-06 1.283922e-04
+Algorithm converged after  2  iterations.
+[1] 5.037608e-05 8.869521e-05 1.283922e-04 6.132737e-06
+Algorithm converged after  2  iterations.
+[1] 0.0006718896
+Algorithm converged after  2  iterations.
+[1] 6.718896e-04 1.546234e-05
+Algorithm converged after  7  iterations.
+[1] 6.718896e-04 2.051195e-05
+Algorithm converged after  8  iterations.
+[1] 0.0006718896 0.0001811076
+[1] 0.0008560573 0.0002732270
+Algorithm converged after  11  iterations.
+[1] 6.718896e-04 1.546234e-05 7.526002e-06
+Algorithm converged after  8  iterations.
+[1] 6.718896e-04 2.051195e-05 3.499148e-06
+Algorithm converged after  9  iterations.
+[1] 6.718896e-04 1.811076e-04 7.340101e-06
+[1] 9.990350e-04 2.508547e-04 8.878927e-06
+Algorithm converged after  14  iterations.
+[1] 6.718896e-04 1.546234e-05 2.051195e-05
+[1] 8.004746e-04 2.382351e-05 2.972273e-05
+Algorithm converged after  11  iterations.
+[1] 6.718896e-04 1.546234e-05 1.811076e-04
+Algorithm converged after  9  iterations.
+[1] 6.718896e-04 2.051195e-05 1.811076e-04
+Algorithm converged after  10  iterations.
+[1] 6.718896e-04 1.546234e-05 7.526002e-06 2.051195e-05
+Algorithm converged after  8  iterations.
+[1] 6.718896e-04 1.546234e-05 7.526002e-06 1.811076e-04
+[1] 1.082987e-03 2.038902e-05 8.809815e-06 2.886973e-04
+Algorithm converged after  11  iterations.
+[1] 6.718896e-04 1.546234e-05 2.051195e-05 3.499148e-06
+Algorithm converged after  8  iterations.
+[1] 6.718896e-04 1.546234e-05 1.811076e-04 7.340101e-06
+[1] 1.130779e-03 2.211916e-05 2.762128e-04 9.494804e-06
+Algorithm converged after  15  iterations.
+[1] 6.718896e-04 2.051195e-05 3.499148e-06 1.811076e-04
+Algorithm converged after  9  iterations.
+[1] 6.718896e-04 2.051195e-05 1.811076e-04 7.340101e-06
+[1] 1.066417e-03 2.497721e-05 2.646982e-04 9.152735e-06
+Algorithm converged after  15  iterations.
+[1] 6.718896e-04 1.546234e-05 2.051195e-05 1.811076e-04
+Algorithm converged after  9  iterations.
+[1] 6.718896e-04 6.609245e-05
+Algorithm converged after  2  iterations.
+[1] 6.718896e-04 6.609245e-05 2.426210e-05
+[1] 8.063714e-04 1.828418e-05 4.137931e-05
+Algorithm converged after  17  iterations.
+[1] 6.718896e-04 6.609245e-05 2.507432e-05
+[1] 7.593479e-04 2.346670e-05 4.199743e-05
+[1] 7.593486e-04 2.346146e-05 4.199812e-05
+Algorithm converged after  21  iterations.
+[1] 6.718896e-04 6.609245e-05 1.024011e-05
+[1] 0.0014771342 0.0003273715 0.0001204557
+[1] 0.0016369025 0.0003559537 0.0001344437
+[1] 0.0016763740 0.0003625719 0.0001378609
+[1] 0.0016861388 0.0003641890 0.0001387041
+[1] 0.0016885541 0.0003645879 0.0001389125
+[1] 0.0016891515 0.0003646866 0.0001389641
+[1] 0.0016892994 0.0003647110 0.0001389768
+[1] 0.001689336 0.000364717 0.000138980
+Algorithm converged after  82  iterations.
+[1] 6.718896e-04 6.609245e-05 2.426210e-05 4.499554e-06
+[1] 8.334212e-04 3.828802e-05 3.658556e-05 5.824934e-06
+Algorithm converged after  12  iterations.
+[1] 6.718896e-04 6.609245e-05 2.507432e-05 2.980572e-06
+Algorithm converged after  10  iterations.
+[1] 6.718896e-04 6.609245e-05 1.024011e-05 4.854550e-06
+[1] 7.093537e-04 1.125903e-04 3.283672e-05 4.875979e-06
+[1] 7.104346e-04 1.129493e-04 3.308410e-05 4.870597e-06
+Algorithm converged after  29  iterations.
+[1] 6.718896e-04 6.609245e-05 2.426210e-05 2.507432e-05
+[1] 9.195759e-04 2.071950e-05 6.454111e-05 7.568797e-05
+Algorithm converged after  11  iterations.
+[1] 6.718896e-04 6.609245e-05 2.426210e-05 1.024011e-05
+[1] 8.307786e-04 8.651974e-05 2.735112e-05 1.359441e-05
+Algorithm converged after  13  iterations.
+[1] 6.718896e-04 6.609245e-05 2.507432e-05 1.024011e-05
+[1] 7.899899e-04 1.149187e-04 2.380070e-05 2.016521e-05
+[1] 7.908320e-04 1.159773e-04 2.369942e-05 2.048908e-05
+[1] 7.908726e-04 1.160278e-04 2.369459e-05 2.050461e-05
+Algorithm converged after  40  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.125525e-05
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001261448
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05 3.000273e-06
+Algorithm converged after  2  iterations.
+[1] 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 8.041187e-05
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05 8.041187e-05
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 8.041187e-05 3.000273e-06
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05 3.000273e-06 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 8.041187e-05 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05 8.041187e-05 3.000273e-06
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 8.041187e-05 3.000273e-06 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 1.530193e-05 8.041187e-05 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 8.041187e-05 3.000273e-06 1.261448e-04
+Algorithm converged after  2  iterations.
+[1] 4.125525e-05 8.041187e-05 1.261448e-04 1.867241e-05
+Algorithm converged after  2  iterations.
+[1] 0.0005937576
+Algorithm converged after  2  iterations.
+[1] 5.937576e-04 1.400613e-05
+Algorithm converged after  8  iterations.
+[1] 0.0005937576 0.0000239175
+Algorithm converged after  7  iterations.
+[1] 0.0005937576 0.0001688287
+[1] 0.0007735507 0.0002808946
+Algorithm converged after  11  iterations.
+[1] 5.937576e-04 1.400613e-05 1.083740e-05
+Algorithm converged after  8  iterations.
+[1] 5.937576e-04 2.391750e-05 3.108287e-06
+[1] 5.533998e-04 2.367099e-05 3.293989e-06
+Algorithm converged after  16  iterations.
+[1] 5.937576e-04 1.688287e-04 9.193170e-06
+[1] 8.898701e-04 2.372684e-04 1.098522e-05
+Algorithm converged after  12  iterations.
+[1] 5.937576e-04 1.400613e-05 2.391750e-05
+Algorithm converged after  7  iterations.
+[1] 5.937576e-04 1.400613e-05 1.688287e-04
+Algorithm converged after  10  iterations.
+[1] 0.0005937576 0.0000239175 0.0001688287
+Algorithm converged after  9  iterations.
+[1] 5.937576e-04 1.400613e-05 1.083740e-05 2.391750e-05
+Algorithm converged after  9  iterations.
+[1] 5.937576e-04 1.400613e-05 1.083740e-05 1.688287e-04
+[1] 1.046879e-03 1.751423e-05 1.348133e-05 3.128409e-04
+Algorithm converged after  12  iterations.
+[1] 5.937576e-04 1.400613e-05 2.391750e-05 3.108287e-06
+[1] 7.074701e-04 1.521464e-05 2.584552e-05 3.080694e-06
+Algorithm converged after  19  iterations.
+[1] 5.937576e-04 1.400613e-05 1.688287e-04 9.193170e-06
+[1] 1.088063e-03 1.833398e-05 2.826148e-04 1.220390e-05
+Algorithm converged after  12  iterations.
+[1] 5.937576e-04 2.391750e-05 3.108287e-06 1.688287e-04
+[1] 7.204247e-04 2.593553e-05 3.144496e-06 2.148705e-04
+Algorithm converged after  17  iterations.
+[1] 5.937576e-04 2.391750e-05 1.688287e-04 9.193170e-06
+[1] 9.716165e-04 3.014146e-05 2.560310e-04 1.141353e-05
+Algorithm converged after  13  iterations.
+[1] 5.937576e-04 1.400613e-05 2.391750e-05 1.688287e-04
+Algorithm converged after  10  iterations.
+[1] 5.937576e-04 7.370636e-05
+Algorithm converged after  2  iterations.
+[1] 5.937576e-04 7.370636e-05 2.101061e-05
+[1] 7.209410e-04 2.298800e-05 2.222757e-05
+[1] 7.208120e-04 2.295218e-05 2.220687e-05
+Algorithm converged after  27  iterations.
+[1] 5.937576e-04 7.370636e-05 2.377892e-05
+[1] 7.016608e-04 2.222374e-05 4.905892e-05
+[1] 7.016676e-04 2.221481e-05 4.906055e-05
+Algorithm converged after  22  iterations.
+[1] 5.937576e-04 7.370636e-05 7.433974e-06
+[1] 1.138458e-03 3.303551e-04 4.409031e-05
+[1] 1.154169e-03 3.342413e-04 4.456947e-05
+[1] 1.154786e-03 3.343913e-04 4.458838e-05
+Algorithm converged after  38  iterations.
+[1] 5.937576e-04 7.370636e-05 2.101061e-05 6.198183e-06
+[1] 7.073522e-04 4.021582e-05 2.940456e-05 7.671963e-06
+Algorithm converged after  17  iterations.
+[1] 5.937576e-04 7.370636e-05 2.377892e-05 3.159964e-06
+[1] 6.729437e-04 2.464257e-05 4.775142e-05 3.955173e-06
+[1] 6.729397e-04 2.463912e-05 4.775170e-05 3.955050e-06
+Algorithm converged after  23  iterations.
+[1] 5.937576e-04 7.370636e-05 7.433974e-06 5.251455e-06
+[1] 5.776735e-04 9.809771e-05 1.383070e-05 5.965211e-06
+[1] 5.779782e-04 9.835315e-05 1.388479e-05 5.963908e-06
+Algorithm converged after  29  iterations.
+[1] 5.937576e-04 7.370636e-05 2.101061e-05 2.377892e-05
+[1] 8.077722e-04 1.573183e-05 2.863628e-05 4.305290e-05
+Algorithm converged after  15  iterations.
+[1] 5.937576e-04 7.370636e-05 2.101061e-05 7.433974e-06
+Algorithm converged after  9  iterations.
+[1] 5.937576e-04 7.370636e-05 2.377892e-05 7.433974e-06
+[1] 7.227751e-04 1.168181e-04 2.535490e-05 1.057277e-05
+Algorithm converged after  15  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.46458e-05
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001147241
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05 3.662081e-06
+Algorithm converged after  2  iterations.
+[1] 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.945957e-05
+Algorithm converged after  2  iterations.
+[1] 0.0000446458 0.0001147241
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06 9.945957e-05
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.945957e-05 3.662081e-06
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05 3.662081e-06 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.945957e-05 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06 9.945957e-05 3.662081e-06
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 9.945957e-05 3.662081e-06 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.771818e-06 9.945957e-05 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.945957e-05 3.662081e-06 1.147241e-04
+Algorithm converged after  2  iterations.
+[1] 4.464580e-05 9.945957e-05 1.147241e-04 3.201905e-05
+Algorithm converged after  2  iterations.
+[1] 0.0006218383
+Algorithm converged after  2  iterations.
+[1] 0.0006218383 0.0000168257
+Algorithm converged after  8  iterations.
+[1] 6.218383e-04 2.799845e-05
+Algorithm converged after  8  iterations.
+[1] 0.0006218383 0.0002069310
+[1] 0.0008080515 0.0003205432
+Algorithm converged after  11  iterations.
+[1] 0.0006218383 0.0000168257 0.0000100760
+Algorithm converged after  9  iterations.
+[1] 6.218383e-04 2.799845e-05 3.475995e-06
+Algorithm converged after  8  iterations.
+[1] 6.218383e-04 2.069310e-04 8.071039e-06
+[1] 9.436959e-04 2.828754e-04 1.009232e-05
+Algorithm converged after  12  iterations.
+[1] 6.218383e-04 1.682570e-05 2.799845e-05
+[1] 7.569104e-04 2.680336e-05 4.091636e-05
+Algorithm converged after  12  iterations.
+[1] 0.0006218383 0.0000168257 0.0002069310
+Algorithm converged after  9  iterations.
+[1] 6.218383e-04 2.799845e-05 2.069310e-04
+Algorithm converged after  10  iterations.
+[1] 6.218383e-04 1.682570e-05 1.007600e-05 2.799845e-05
+Algorithm converged after  10  iterations.
+[1] 0.0006218383 0.0000168257 0.0000100760 0.0002069310
+[1] 1.168522e-03 2.331981e-05 1.286838e-05 3.603586e-04
+Algorithm converged after  12  iterations.
+[1] 6.218383e-04 1.682570e-05 2.799845e-05 3.475995e-06
+Algorithm converged after  7  iterations.
+[1] 6.218383e-04 1.682570e-05 2.069310e-04 8.071039e-06
+[1] 1.059010e-03 2.302651e-05 3.112711e-04 1.085300e-05
+Algorithm converged after  13  iterations.
+[1] 6.218383e-04 2.799845e-05 3.475995e-06 2.069310e-04
+Algorithm converged after  10  iterations.
+[1] 6.218383e-04 2.799845e-05 2.069310e-04 8.071039e-06
+[1] 1.031914e-03 3.546146e-05 3.058021e-04 1.060077e-05
+Algorithm converged after  13  iterations.
+[1] 6.218383e-04 1.682570e-05 2.799845e-05 2.069310e-04
+Algorithm converged after  9  iterations.
+[1] 6.218383e-04 7.785694e-05
+Algorithm converged after  2  iterations.
+[1] 6.218383e-04 7.785694e-05 3.127335e-05
+[1] 7.362379e-04 2.043404e-05 5.485609e-05
+Algorithm converged after  14  iterations.
+[1] 6.218383e-04 7.785694e-05 3.486900e-05
+[1] 7.393052e-04 3.059798e-05 5.869884e-05
+[1] 7.393025e-04 3.058423e-05 5.869982e-05
+Algorithm converged after  22  iterations.
+[1] 6.218383e-04 7.785694e-05 9.961700e-06
+[1] 0.0016219861 0.0003515880 0.0001734481
+[1] 0.0019015799 0.0004002728 0.0002041016
+[1] 0.0019578730 0.0004104454 0.0002101033
+[1] 0.0019691124 0.0004124876 0.0002112965
+[1] 0.0019713791 0.0004128992 0.0002115370
+[1] 0.0019718376 0.0004129823 0.0002115857
+[1] 0.0019719304 0.0004129991 0.0002115955
+Algorithm converged after  76  iterations.
+[1] 6.218383e-04 7.785694e-05 3.127335e-05 5.185348e-06
+[1] 7.834451e-04 3.432338e-05 4.967810e-05 6.843677e-06
+[1] 7.834596e-04 3.433055e-05 4.967770e-05 6.843857e-06
+Algorithm converged after  22  iterations.
+[1] 6.218383e-04 7.785694e-05 3.486900e-05 3.023933e-06
+[1] 7.125925e-04 4.310184e-05 5.273258e-05 4.000870e-06
+Algorithm converged after  13  iterations.
+[1] 6.218383e-04 7.785694e-05 9.961700e-06 4.733994e-06
+[1] 6.472244e-04 1.208808e-04 3.857075e-05 5.087421e-06
+[1] 6.479888e-04 1.211067e-04 3.878504e-05 5.085552e-06
+Algorithm converged after  23  iterations.
+[1] 6.218383e-04 7.785694e-05 3.127335e-05 3.486900e-05
+[1] 8.934483e-04 2.025299e-05 8.638609e-05 1.003439e-04
+Algorithm converged after  15  iterations.
+[1] 6.218383e-04 7.785694e-05 3.127335e-05 9.961700e-06
+[1] 7.429459e-04 7.340273e-05 3.763436e-05 9.000683e-06
+Algorithm converged after  11  iterations.
+[1] 6.218383e-04 7.785694e-05 3.486900e-05 9.961700e-06
+[1] 7.421427e-04 9.777516e-05 3.930132e-05 1.085242e-05
+Algorithm converged after  18  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.007679e-05
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001674466
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05 4.227062e-06
+Algorithm converged after  2  iterations.
+[1] 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 7.931406e-05
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05 7.931406e-05
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 7.931406e-05 4.227062e-06
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05 4.227062e-06 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 7.931406e-05 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05 7.931406e-05 4.227062e-06
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 7.931406e-05 4.227062e-06 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 1.084704e-05 7.931406e-05 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 7.931406e-05 4.227062e-06 1.674466e-04
+Algorithm converged after  2  iterations.
+[1] 4.007679e-05 7.931406e-05 1.674466e-04 7.178054e-05
+Algorithm converged after  2  iterations.
+[1] 0.0006941199
+Algorithm converged after  2  iterations.
+[1] 6.941199e-04 1.378074e-05
+Algorithm converged after  8  iterations.
+[1] 6.941199e-04 7.220432e-06
+Algorithm converged after  9  iterations.
+[1] 0.0006941199 0.0002032340
+[1] 0.0011556561 0.0003717356
+Algorithm converged after  14  iterations.
+[1] 6.941199e-04 1.378074e-05 9.870972e-06
+Algorithm converged after  7  iterations.
+[1] 6.941199e-04 7.220432e-06 4.476607e-06
+Algorithm converged after  7  iterations.
+[1] 6.941199e-04 2.032340e-04 6.911248e-06
+[1] 1.391197e-03 4.056547e-04 9.222082e-06
+Algorithm converged after  19  iterations.
+[1] 6.941199e-04 1.378074e-05 7.220432e-06
+[1] 7.250432e-04 1.552593e-05 6.928984e-06
+[1] 7.252101e-04 1.553283e-05 6.925475e-06
+Algorithm converged after  25  iterations.
+[1] 6.941199e-04 1.378074e-05 2.032340e-04
+[1] 0.0012935055 0.0000210989 0.0004579507
+Algorithm converged after  17  iterations.
+[1] 6.941199e-04 7.220432e-06 2.032340e-04
+[1] 1.139244e-03 7.105668e-06 3.506889e-04
+Algorithm converged after  13  iterations.
+[1] 6.941199e-04 1.378074e-05 9.870972e-06 7.220432e-06
+Algorithm converged after  7  iterations.
+[1] 6.941199e-04 1.378074e-05 9.870972e-06 2.032340e-04
+[1] 1.409692e-03 1.638380e-05 1.177104e-05 4.149538e-04
+Algorithm converged after  13  iterations.
+[1] 6.941199e-04 1.378074e-05 7.220432e-06 4.476607e-06
+Algorithm converged after  8  iterations.
+[1] 6.941199e-04 1.378074e-05 2.032340e-04 6.911248e-06
+[1] 1.581361e-03 1.739100e-05 4.661560e-04 1.017662e-05
+Algorithm converged after  20  iterations.
+[1] 6.941199e-04 7.220432e-06 4.476607e-06 2.032340e-04
+[1] 1.111358e-03 7.766919e-06 4.698963e-06 3.484901e-04
+Algorithm converged after  14  iterations.
+[1] 6.941199e-04 7.220432e-06 2.032340e-04 6.911248e-06
+[1] 1.403835e-03 8.034433e-06 4.075551e-04 9.218712e-06
+Algorithm converged after  19  iterations.
+[1] 6.941199e-04 1.378074e-05 7.220432e-06 2.032340e-04
+[1] 1.259148e-03 1.928299e-05 6.397279e-06 4.234663e-04
+Algorithm converged after  16  iterations.
+[1] 0.0006941199 0.0001676937
+Algorithm converged after  2  iterations.
+[1] 6.941199e-04 1.676937e-04 1.533552e-05
+[1] 8.058979e-04 3.588908e-05 2.419730e-05
+Algorithm converged after  13  iterations.
+[1] 0.0006941199 0.0001676937 0.0000112628
+[1] 7.647545e-04 6.604944e-05 1.871445e-05
+[1] 7.647363e-04 6.607550e-05 1.871355e-05
+Algorithm converged after  22  iterations.
+[1] 6.941199e-04 1.676937e-04 6.413325e-06
+Algorithm converged after  10  iterations.
+[1] 6.941199e-04 1.676937e-04 1.533552e-05 3.613626e-06
+[1] 0.0008108396 0.0001403512 0.0000209539 0.0000049729
+Algorithm converged after  13  iterations.
+[1] 6.941199e-04 1.676937e-04 1.126280e-05 3.420278e-06
+[1] 7.882533e-04 5.692523e-05 2.084977e-05 4.409771e-06
+[1] 7.888215e-04 5.580987e-05 2.100973e-05 4.342214e-06
+[1] 7.888454e-04 5.572782e-05 2.101343e-05 4.337471e-06
+[1] 7.888469e-04 5.572245e-05 2.101365e-05 4.337161e-06
+[1] 7.888470e-04 5.572210e-05 2.101366e-05 4.337141e-06
+Algorithm converged after  52  iterations.
+[1] 6.941199e-04 1.676937e-04 6.413325e-06 1.692389e-06
+[1] 7.165086e-04 1.699514e-04 6.560947e-06 1.466808e-06
+Algorithm converged after  16  iterations.
+[1] 6.941199e-04 1.676937e-04 1.533552e-05 1.126280e-05
+[1] 8.089863e-04 1.581670e-05 5.496623e-05 7.122448e-05
+Algorithm converged after  13  iterations.
+[1] 6.941199e-04 1.676937e-04 1.533552e-05 6.413325e-06
+[1] 7.316734e-04 3.708429e-05 2.568211e-05 7.991235e-06
+[1] 7.326093e-04 3.792022e-05 2.586158e-05 8.155405e-06
+Algorithm converged after  24  iterations.
+[1] 6.941199e-04 1.676937e-04 1.126280e-05 6.413325e-06
+[1] 7.321763e-04 5.957331e-05 1.040281e-04 5.327324e-04
+[1] 7.449948e-04 6.775051e-05 1.091003e-04 6.062576e-04
+[1] 7.454567e-04 6.803903e-05 1.092808e-04 6.088645e-04
+[1] 7.454731e-04 6.804922e-05 1.092872e-04 6.089566e-04
+Algorithm converged after  44  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.711759e-05
+Algorithm converged after  2  iterations.
+[1] 7.66762e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001094946
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06
+Algorithm converged after  2  iterations.
+[1] 7.667620e-05 1.798038e-05
+Algorithm converged after  2  iterations.
+[1] 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 7.667620e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 0.0000766762 0.0001094946
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06 7.667620e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 7.667620e-05 1.798038e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 7.667620e-05 1.798038e-05 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 7.667620e-05 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 7.667620e-05 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06 7.667620e-05 1.798038e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 7.667620e-05 1.798038e-05 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 9.851855e-06 7.667620e-05 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 7.667620e-05 1.798038e-05 1.094946e-04
+Algorithm converged after  2  iterations.
+[1] 4.711759e-05 7.667620e-05 1.094946e-04 5.376209e-05
+Algorithm converged after  2  iterations.
+[1] 0.0005914958
+Algorithm converged after  2  iterations.
+[1] 0.0005914958 0.0000186312
+Algorithm converged after  7  iterations.
+[1] 5.914958e-04 8.350064e-06
+Algorithm converged after  8  iterations.
+[1] 0.0005914958 0.0002104929
+[1] 0.0008667563 0.0004006152
+Algorithm converged after  14  iterations.
+[1] 5.914958e-04 1.863120e-05 1.090959e-05
+Algorithm converged after  7  iterations.
+[1] 5.914958e-04 8.350064e-06 3.478848e-06
+[1] 6.114212e-04 8.656128e-06 3.603813e-06
+Algorithm converged after  19  iterations.
+[1] 5.914958e-04 2.104929e-04 1.010197e-05
+[1] 1.050291e-03 3.615503e-04 1.364109e-05
+Algorithm converged after  14  iterations.
+[1] 5.914958e-04 1.863120e-05 8.350064e-06
+Algorithm converged after  10  iterations.
+[1] 0.0005914958 0.0000186312 0.0002104929
+[1] 9.071677e-04 2.047086e-05 3.469372e-04
+Algorithm converged after  12  iterations.
+[1] 5.914958e-04 8.350064e-06 2.104929e-04
+[1] 8.970576e-04 9.712733e-06 3.640207e-04
+Algorithm converged after  12  iterations.
+[1] 5.914958e-04 1.863120e-05 1.090959e-05 8.350064e-06
+Algorithm converged after  8  iterations.
+[1] 5.914958e-04 1.863120e-05 1.090959e-05 2.104929e-04
+[1] 1.039837e-03 2.266125e-05 1.266739e-05 3.792157e-04
+Algorithm converged after  12  iterations.
+[1] 5.914958e-04 1.863120e-05 8.350064e-06 3.478848e-06
+[1] 6.779098e-04 2.040640e-05 9.687121e-06 3.578890e-06
+Algorithm converged after  15  iterations.
+[1] 5.914958e-04 1.863120e-05 2.104929e-04 1.010197e-05
+[1] 1.173433e-03 2.471214e-05 4.007504e-04 1.467255e-05
+Algorithm converged after  15  iterations.
+[1] 5.914958e-04 8.350064e-06 3.478848e-06 2.104929e-04
+[1] 8.848485e-04 1.133155e-05 3.691843e-06 3.239002e-04
+Algorithm converged after  16  iterations.
+[1] 5.914958e-04 8.350064e-06 2.104929e-04 1.010197e-05
+[1] 1.162071e-03 1.531215e-05 3.999818e-04 1.451850e-05
+Algorithm converged after  16  iterations.
+[1] 5.914958e-04 1.863120e-05 8.350064e-06 2.104929e-04
+[1] 9.604548e-04 2.204611e-05 1.244075e-05 3.425644e-04
+Algorithm converged after  11  iterations.
+[1] 0.0005914958 0.0001041326
+Algorithm converged after  2  iterations.
+[1] 5.914958e-04 1.041326e-04 2.726497e-05
+Algorithm converged after  10  iterations.
+[1] 5.914958e-04 1.041326e-04 1.301077e-05
+[1] 7.018860e-04 3.490751e-05 2.977536e-05
+Algorithm converged after  16  iterations.
+[1] 5.914958e-04 1.041326e-04 6.144389e-06
+Algorithm converged after  10  iterations.
+[1] 5.914958e-04 1.041326e-04 2.726497e-05 6.528318e-06
+[1] 7.565393e-04 3.168070e-05 4.109985e-05 9.104886e-06
+[1] 7.565310e-04 3.169874e-05 4.109787e-05 9.105854e-06
+Algorithm converged after  24  iterations.
+[1] 5.914958e-04 1.041326e-04 1.301077e-05 3.103700e-06
+[1] 6.885653e-04 3.760376e-05 1.994885e-05 3.547517e-06
+[1] 6.886352e-04 3.754568e-05 1.995262e-05 3.545557e-06
+[1] 6.886427e-04 3.753929e-05 1.995303e-05 3.545313e-06
+[1] 6.886437e-04 3.753852e-05 1.995308e-05 3.545284e-06
+Algorithm converged after  50  iterations.
+[1] 5.914958e-04 1.041326e-04 6.144389e-06 3.832166e-06
+[1] 5.335721e-04 4.761737e-05 1.092764e-04 9.073778e-06
+[1] 5.290394e-04 5.342020e-05 1.440302e-04 9.199997e-06
+[1] 5.289472e-04 5.356801e-05 1.449679e-04 9.203162e-06
+[1] 5.289449e-04 5.357173e-05 1.449916e-04 9.203242e-06
+Algorithm converged after  43  iterations.
+[1] 5.914958e-04 1.041326e-04 2.726497e-05 1.301077e-05
+[1] 8.080009e-04 3.267234e-05 3.463984e-05 2.167752e-05
+[1] 7.485291e-04 2.855294e-05 2.631700e-05 1.351476e-05
+Algorithm converged after  24  iterations.
+[1] 5.914958e-04 1.041326e-04 2.726497e-05 6.144389e-06
+[1] 9.645784e-04 2.095296e-04 5.764195e-05 4.876721e-05
+[1] 9.183605e-04 1.888457e-04 5.519384e-05 3.992444e-05
+[1] 9.177282e-04 1.885680e-04 5.516070e-05 3.980958e-05
+[1] 9.177499e-04 1.885782e-04 5.516189e-05 3.981380e-05
+Algorithm converged after  41  iterations.
+[1] 5.914958e-04 1.041326e-04 1.301077e-05 6.144389e-06
+[1] 8.290026e-04 2.430599e-04 1.127060e-05 1.502918e-05
+[1] 8.328524e-04 2.444967e-04 1.120009e-05 1.526556e-05
+[1] 8.328878e-04 2.445097e-04 1.119945e-05 1.526773e-05
+Algorithm converged after  31  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.059022e-05
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001338762
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05 4.776374e-06
+Algorithm converged after  2  iterations.
+[1] 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 7.952611e-05
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05 7.952611e-05
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 7.952611e-05 4.776374e-06
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05 4.776374e-06 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 7.952611e-05 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05 7.952611e-05 4.776374e-06
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 7.952611e-05 4.776374e-06 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 1.484482e-05 7.952611e-05 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 7.952611e-05 4.776374e-06 1.338762e-04
+Algorithm converged after  2  iterations.
+[1] 4.059022e-05 7.952611e-05 1.338762e-04 5.951013e-05
+Algorithm converged after  2  iterations.
+[1] 0.0006086335
+Algorithm converged after  2  iterations.
+[1] 6.086335e-04 1.017179e-05
+Algorithm converged after  7  iterations.
+[1] 6.086335e-04 1.873912e-05
+Algorithm converged after  8  iterations.
+[1] 0.0006086335 0.0001123301
+[1] 0.0007856319 0.0002105193
+Algorithm converged after  11  iterations.
+[1] 6.086335e-04 1.017179e-05 7.919427e-06
+Algorithm converged after  9  iterations.
+[1] 6.086335e-04 1.873912e-05 4.221339e-06
+Algorithm converged after  9  iterations.
+[1] 6.086335e-04 1.123301e-04 1.024593e-05
+[1] 9.007020e-04 1.639127e-04 1.195228e-05
+Algorithm converged after  13  iterations.
+[1] 6.086335e-04 1.017179e-05 1.873912e-05
+Algorithm converged after  10  iterations.
+[1] 6.086335e-04 1.017179e-05 1.123301e-04
+[1] 8.473088e-04 1.467015e-05 2.866716e-04
+Algorithm converged after  12  iterations.
+[1] 6.086335e-04 1.873912e-05 1.123301e-04
+Algorithm converged after  10  iterations.
+[1] 6.086335e-04 1.017179e-05 7.919427e-06 1.873912e-05
+[1] 8.589316e-04 1.192402e-05 9.344046e-06 2.938596e-05
+Algorithm converged after  11  iterations.
+[1] 6.086335e-04 1.017179e-05 7.919427e-06 1.123301e-04
+[1] 9.822221e-04 1.145930e-05 7.625009e-06 2.022485e-04
+Algorithm converged after  17  iterations.
+[1] 6.086335e-04 1.017179e-05 1.873912e-05 4.221339e-06
+[1] 6.845625e-04 1.095162e-05 2.003516e-05 4.610118e-06
+Algorithm converged after  13  iterations.
+[1] 6.086335e-04 1.017179e-05 1.123301e-04 1.024593e-05
+[1] 1.298147e-03 1.297053e-05 2.362172e-04 1.457931e-05
+Algorithm converged after  15  iterations.
+[1] 6.086335e-04 1.873912e-05 4.221339e-06 1.123301e-04
+Algorithm converged after  10  iterations.
+[1] 6.086335e-04 1.873912e-05 1.123301e-04 1.024593e-05
+[1] 9.801960e-04 2.387924e-05 1.783493e-04 1.240514e-05
+Algorithm converged after  14  iterations.
+[1] 6.086335e-04 1.017179e-05 1.873912e-05 1.123301e-04
+[1] 8.654301e-04 1.278533e-05 1.586291e-05 2.401010e-04
+Algorithm converged after  11  iterations.
+[1] 6.086335e-04 6.833009e-05
+Algorithm converged after  2  iterations.
+[1] 6.086335e-04 6.833009e-05 1.225371e-05
+[1] 6.901112e-04 2.168747e-05 2.131234e-05
+Algorithm converged after  19  iterations.
+[1] 6.086335e-04 6.833009e-05 2.301798e-05
+[1] 7.088141e-04 2.441683e-05 4.535267e-05
+Algorithm converged after  16  iterations.
+[1] 6.086335e-04 6.833009e-05 6.537807e-06
+[1] 1.004693e-03 3.012153e-05 7.445448e-04
+[1] 1.023038e-03 3.052087e-05 7.744994e-04
+[1] 0.0010232667 0.0000305264 0.0007748745
+Algorithm converged after  34  iterations.
+[1] 6.086335e-04 6.833009e-05 1.225371e-05 5.218713e-06
+Algorithm converged after  10  iterations.
+[1] 6.086335e-04 6.833009e-05 2.301798e-05 3.771494e-06
+[1] 6.827669e-04 3.692049e-05 3.651017e-05 4.947210e-06
+Algorithm converged after  14  iterations.
+[1] 6.086335e-04 6.833009e-05 6.537807e-06 2.242352e-06
+[1] 5.704600e-04 4.274531e-05 1.319469e-05 9.939403e-06
+[1] 5.606345e-04 4.360797e-05 1.756987e-05 1.016613e-05
+[1] 5.604948e-04 4.361902e-05 1.765852e-05 1.016907e-05
+Algorithm converged after  40  iterations.
+[1] 6.086335e-04 6.833009e-05 1.225371e-05 2.301798e-05
+[1] 8.095347e-04 1.847772e-05 3.746890e-05 7.151567e-05
+Algorithm converged after  12  iterations.
+[1] 6.086335e-04 6.833009e-05 1.225371e-05 6.537807e-06
+[1] 8.878490e-04 9.266567e-05 4.411379e-05 7.981763e-04
+[1] 8.978631e-04 9.478867e-05 4.576670e-05 8.221871e-04
+[1] 8.979531e-04 9.480780e-05 4.578207e-05 8.224037e-04
+Algorithm converged after  33  iterations.
+[1] 6.086335e-04 6.833009e-05 2.301798e-05 6.537807e-06
+[1] 7.621601e-04 8.833469e-05 9.950981e-05 5.460623e-04
+[1] 7.740285e-04 9.315632e-05 1.028363e-04 5.941394e-04
+[1] 7.746847e-04 9.341552e-05 1.030175e-04 5.967699e-04
+[1] 7.747203e-04 9.342957e-05 1.030274e-04 5.969126e-04
+Algorithm converged after  47  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 3.989923e-05
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001344608
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05 7.522063e-06
+Algorithm converged after  2  iterations.
+[1] 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.077848e-05
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06 9.077848e-05
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.077848e-05 7.522063e-06
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05 7.522063e-06 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.077848e-05 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06 9.077848e-05 7.522063e-06
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 9.077848e-05 7.522063e-06 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.056121e-06 9.077848e-05 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.077848e-05 7.522063e-06 1.344608e-04
+Algorithm converged after  2  iterations.
+[1] 3.989923e-05 9.077848e-05 1.344608e-04 5.644062e-05
+Algorithm converged after  2  iterations.
+[1] 0.0006638285
+Algorithm converged after  2  iterations.
+[1] 6.638285e-04 1.090432e-05
+Algorithm converged after  7  iterations.
+[1] 6.638285e-04 1.318727e-05
+Algorithm converged after  8  iterations.
+[1] 0.0006638285 0.0002238338
+[1] 0.0009369867 0.0003787748
+Algorithm converged after  12  iterations.
+[1] 6.638285e-04 1.090432e-05 8.339400e-06
+[1] 8.150694e-04 1.146694e-05 6.038836e-06
+[1] 8.150505e-04 1.146651e-05 6.006048e-06
+[1] 8.150491e-04 1.146648e-05 6.003548e-06
+[1] 8.150490e-04 1.146648e-05 6.003345e-06
+Algorithm converged after  41  iterations.
+[1] 6.638285e-04 1.318727e-05 3.854348e-06
+Algorithm converged after  8  iterations.
+[1] 6.638285e-04 2.238338e-04 8.770109e-06
+[1] 1.103018e-03 3.575908e-04 1.104986e-05
+Algorithm converged after  14  iterations.
+[1] 6.638285e-04 1.090432e-05 1.318727e-05
+Algorithm converged after  10  iterations.
+[1] 6.638285e-04 1.090432e-05 2.238338e-04
+[1] 1.182278e-03 1.323149e-05 5.158528e-04
+[1] 1.135454e-03 1.333798e-05 5.251478e-04
+Algorithm converged after  26  iterations.
+[1] 6.638285e-04 1.318727e-05 2.238338e-04
+[1] 9.603169e-04 1.414586e-05 3.533611e-04
+Algorithm converged after  11  iterations.
+[1] 6.638285e-04 1.090432e-05 8.339400e-06 1.318727e-05
+[1] 8.570145e-04 1.159532e-05 8.322575e-06 1.444416e-05
+Algorithm converged after  11  iterations.
+[1] 6.638285e-04 1.090432e-05 8.339400e-06 2.238338e-04
+[1] 1.217793e-03 1.332899e-05 6.452933e-06 5.082523e-04
+[1] 1.218345e-03 1.333237e-05 6.562288e-06 5.090503e-04
+[1] 1.218351e-03 1.333240e-05 6.563233e-06 5.090574e-04
+Algorithm converged after  31  iterations.
+[1] 6.638285e-04 1.090432e-05 1.318727e-05 3.854348e-06
+Algorithm converged after  9  iterations.
+[1] 6.638285e-04 1.090432e-05 2.238338e-04 8.770109e-06
+[1] 1.305148e-03 1.356759e-05 4.168799e-04 1.218268e-05
+Algorithm converged after  14  iterations.
+[1] 6.638285e-04 1.318727e-05 3.854348e-06 2.238338e-04
+[1] 8.982973e-04 1.539577e-05 4.297837e-06 3.233276e-04
+Algorithm converged after  12  iterations.
+[1] 6.638285e-04 1.318727e-05 2.238338e-04 8.770109e-06
+[1] 1.187748e-03 1.864433e-05 3.846129e-04 1.149873e-05
+Algorithm converged after  15  iterations.
+[1] 6.638285e-04 1.090432e-05 1.318727e-05 2.238338e-04
+[1] 1.138419e-03 1.279245e-05 1.716833e-05 3.918567e-04
+Algorithm converged after  16  iterations.
+[1] 0.0006638285 0.0001259128
+Algorithm converged after  2  iterations.
+[1] 6.638285e-04 1.259128e-04 1.701562e-05
+Algorithm converged after  9  iterations.
+[1] 6.638285e-04 1.259128e-04 1.613871e-05
+[1] 7.645495e-04 3.092141e-05 4.756510e-05
+Algorithm converged after  11  iterations.
+[1] 6.638285e-04 1.259128e-04 6.378777e-06
+Algorithm converged after  9  iterations.
+[1] 6.638285e-04 1.259128e-04 1.701562e-05 4.707831e-06
+[1] 7.953239e-04 4.480930e-05 2.367531e-05 6.807062e-06
+[1] 7.953208e-04 4.483863e-05 2.367424e-05 6.807526e-06
+Algorithm converged after  24  iterations.
+[1] 6.638285e-04 1.259128e-04 1.613871e-05 3.302841e-06
+[1] 7.390852e-04 3.355746e-05 3.661472e-05 4.483612e-06
+Algorithm converged after  16  iterations.
+[1] 6.638285e-04 1.259128e-04 6.378777e-06 3.433965e-06
+[1] 5.990827e-04 4.137587e-05 1.293085e-05 7.774086e-06
+[1] 5.978861e-04 4.143846e-05 1.359763e-05 7.789961e-06
+[1] 5.978511e-04 4.144025e-05 1.361817e-05 7.790427e-06
+Algorithm converged after  40  iterations.
+[1] 6.638285e-04 1.259128e-04 1.701562e-05 1.613871e-05
+[1] 8.375962e-04 6.123575e-05 2.396764e-05 2.859053e-05
+[1] 8.038446e-04 4.020616e-05 2.178708e-05 2.643720e-05
+[1] 8.031889e-04 3.977265e-05 2.173126e-05 2.637282e-05
+[1] 8.031776e-04 3.976512e-05 2.173029e-05 2.637169e-05
+Algorithm converged after  43  iterations.
+[1] 6.638285e-04 1.259128e-04 1.701562e-05 6.378777e-06
+[1] 7.434747e-04 1.090390e-05 2.741622e-05 1.310757e-05
+[1] 7.433244e-04 1.601937e-05 2.668472e-05 1.396224e-05
+[1] 7.447815e-04 1.644886e-05 2.651317e-05 1.449565e-05
+[1] 7.449646e-04 1.649086e-05 2.649374e-05 1.455988e-05
+[1] 7.449852e-04 1.649546e-05 2.649157e-05 1.456709e-05
+[1] 7.449875e-04 1.649597e-05 2.649133e-05 1.456790e-05
+[1] 7.449878e-04 1.649603e-05 2.649130e-05 1.456799e-05
+Algorithm converged after  74  iterations.
+[1] 6.638285e-04 1.259128e-04 1.613871e-05 6.378777e-06
+[1] 8.401994e-04 1.196245e-04 4.051715e-05 1.657321e-05
+[1] 8.030304e-04 9.219669e-05 3.699962e-05 1.089142e-05
+[1] 8.045981e-04 9.198377e-05 3.692447e-05 1.080313e-05
+[1] 8.046767e-04 9.198233e-05 3.692233e-05 1.080029e-05
+Algorithm converged after  45  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.107687e-05
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001271782
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05 7.914971e-06
+Algorithm converged after  2  iterations.
+[1] 0.0001271782 0.0000703023
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 8.241201e-05
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05 8.241201e-05
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 8.241201e-05 7.914971e-06
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.271782e-04 7.030230e-05
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05 7.914971e-06 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05 1.271782e-04 7.030230e-05
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 8.241201e-05 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05 8.241201e-05 7.914971e-06
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05 1.271782e-04 7.030230e-05
+Algorithm converged after  2  iterations.
+[1] 8.241201e-05 7.914971e-06 1.271782e-04 7.030230e-05
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 1.302104e-05 8.241201e-05 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 8.241201e-05 7.914971e-06 1.271782e-04
+Algorithm converged after  2  iterations.
+[1] 4.107687e-05 8.241201e-05 1.271782e-04 7.030230e-05
+Algorithm converged after  2  iterations.
+[1] 0.0006210716
+Algorithm converged after  2  iterations.
+[1] 6.210716e-04 1.173685e-05
+Algorithm converged after  9  iterations.
+[1] 6.210716e-04 1.164683e-05
+Algorithm converged after  8  iterations.
+[1] 0.0006210716 0.0002107332
+[1] 0.0009461322 0.0003998559
+Algorithm converged after  13  iterations.
+[1] 6.210716e-04 1.173685e-05 3.285422e-06
+Algorithm converged after  7  iterations.
+[1] 6.210716e-04 1.164683e-05 4.389951e-06
+Algorithm converged after  8  iterations.
+[1] 6.210716e-04 2.107332e-04 1.041223e-05
+[1] 1.090735e-03 3.634138e-04 1.280388e-05
+Algorithm converged after  14  iterations.
+[1] 6.210716e-04 1.173685e-05 1.164683e-05
+[1] 7.743337e-04 1.740239e-05 2.487935e-05
+Algorithm converged after  12  iterations.
+[1] 6.210716e-04 1.173685e-05 2.107332e-04
+[1] 1.162410e-03 1.601671e-05 5.652436e-04
+Algorithm converged after  20  iterations.
+[1] 6.210716e-04 1.164683e-05 2.107332e-04
+[1] 0.0009645873 0.0000124729 0.0003710222
+Algorithm converged after  12  iterations.
+[1] 6.210716e-04 1.173685e-05 3.285422e-06 1.164683e-05
+[1] 8.880827e-04 1.470736e-05 1.103573e-05 1.868040e-05
+Algorithm converged after  11  iterations.
+[1] 6.210716e-04 1.173685e-05 3.285422e-06 2.107332e-04
+[1] 1.331126e-03 1.565573e-05 4.899249e-06 5.433817e-04
+Algorithm converged after  19  iterations.
+[1] 6.210716e-04 1.173685e-05 1.164683e-05 4.389951e-06
+[1] 8.103280e-04 1.320955e-05 1.331352e-05 4.627270e-06
+Algorithm converged after  12  iterations.
+[1] 6.210716e-04 1.173685e-05 2.107332e-04 1.041223e-05
+[1] 1.495954e-03 1.665935e-05 4.998455e-04 1.525909e-05
+Algorithm converged after  14  iterations.
+[1] 6.210716e-04 1.164683e-05 4.389951e-06 2.107332e-04
+[1] 9.058064e-04 1.380278e-05 4.850754e-06 3.389958e-04
+Algorithm converged after  12  iterations.
+[1] 6.210716e-04 1.164683e-05 2.107332e-04 1.041223e-05
+[1] 1.171330e-03 1.629758e-05 3.901521e-04 1.318940e-05
+Algorithm converged after  15  iterations.
+[1] 6.210716e-04 1.173685e-05 1.164683e-05 2.107332e-04
+[1] 1.347547e-03 1.570240e-05 1.514013e-05 5.125090e-04
+[1] 1.347688e-03 1.570326e-05 1.513842e-05 5.126296e-04
+Algorithm converged after  27  iterations.
+[1] 0.0006210716 0.0001317200
+Algorithm converged after  2  iterations.
+[1] 6.210716e-04 1.317200e-04 1.816951e-05
+Algorithm converged after  9  iterations.
+[1] 6.210716e-04 1.317200e-04 1.553839e-05
+[1] 7.290384e-04 3.897366e-05 3.462001e-05
+Algorithm converged after  16  iterations.
+[1] 6.210716e-04 1.317200e-04 7.089731e-06
+[1] 5.889373e-04 1.627366e-04 8.391243e-06
+Algorithm converged after  13  iterations.
+[1] 6.210716e-04 1.317200e-04 1.816951e-05 4.986351e-06
+[1] 7.590767e-04 7.856961e-05 2.529989e-05 6.135383e-06
+Algorithm converged after  14  iterations.
+[1] 6.210716e-04 1.317200e-04 1.553839e-05 3.699109e-06
+[1] 6.964675e-04 5.494051e-05 2.775206e-05 4.705792e-06
+Algorithm converged after  17  iterations.
+[1] 6.210716e-04 1.317200e-04 7.089731e-06 2.153057e-06
+[1] 6.173650e-04 1.614993e-04 7.874448e-06 2.423124e-06
+[1] 6.227883e-04 1.498433e-04 8.801012e-06 2.473381e-06
+[1] 6.722585e-04 1.967223e-04 8.880169e-06 2.488706e-06
+[1] 6.722338e-04 1.972219e-04 8.884076e-06 2.490220e-06
+[1] 6.722549e-04 1.972838e-04 8.884264e-06 2.490546e-06
+[1] 6.722571e-04 1.972898e-04 8.884280e-06 2.490579e-06
+Algorithm converged after  70  iterations.
+[1] 6.210716e-04 1.317200e-04 1.816951e-05 1.553839e-05
+[1] 7.970479e-04 2.237007e-05 2.235983e-05 2.658550e-05
+Algorithm converged after  16  iterations.
+[1] 6.210716e-04 1.317200e-04 1.816951e-05 7.089731e-06
+[1] 9.829019e-04 2.480113e-05 1.669729e-05 3.051516e-04
+[1] 1.154931e-03 2.797890e-05 1.763264e-05 5.022303e-04
+[1] 1.205723e-03 2.001690e-05 3.091745e-05 1.186380e-03
+[1] 1.226177e-03 3.541305e-05 3.665976e-05 1.263927e-03
+[1] 1.227132e-03 3.536096e-05 3.672862e-05 1.265537e-03
+[1] 1.227145e-03 3.535922e-05 3.672951e-05 1.265558e-03
+Algorithm converged after  65  iterations.
+[1] 6.210716e-04 1.317200e-04 1.553839e-05 7.089731e-06
+[1] 8.087534e-04 4.686993e-05 8.779976e-05 5.042755e-04
+[1] 8.403431e-04 4.519757e-05 9.277414e-05 5.878633e-04
+[1] 8.434921e-04 4.501013e-05 9.325029e-05 5.960510e-04
+[1] 8.437933e-04 4.499204e-05 9.329566e-05 5.968328e-04
+[1] 8.438220e-04 4.499031e-05 9.329998e-05 5.969073e-04
+Algorithm converged after  57  iterations.
+numeric(0)
+Algorithm converged after  1  iterations.
+[1] 4.869388e-05
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05
+Algorithm converged after  2  iterations.
+[1] 0.0001475715
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05 3.482704e-06
+Algorithm converged after  2  iterations.
+[1] 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.976229e-05
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06 8.976229e-05
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.976229e-05 3.482704e-06
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05 3.482704e-06 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.976229e-05 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06 8.976229e-05 3.482704e-06
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 8.976229e-05 3.482704e-06 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.886408e-06 8.976229e-05 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.976229e-05 3.482704e-06 1.475715e-04
+Algorithm converged after  2  iterations.
+[1] 4.869388e-05 8.976229e-05 1.475715e-04 7.865764e-05
+Algorithm converged after  2  iterations.
+[1] 0.0007255907
+Algorithm converged after  2  iterations.
+[1] 7.255907e-04 1.038894e-05
+Algorithm converged after  8  iterations.
+[1] 7.255907e-04 7.372682e-06
+Algorithm converged after  9  iterations.
+[1] 0.0007255907 0.0003339028
+[1] 0.0013366948 0.0006880535
+Algorithm converged after  16  iterations.
+[1] 7.255907e-04 1.038894e-05 7.710148e-06
+[1] 8.704539e-04 1.260140e-05 9.572459e-06
+Algorithm converged after  14  iterations.
+[1] 7.255907e-04 7.372682e-06 4.079476e-06
+[1] 6.526514e-04 7.609076e-06 4.373273e-06
+Algorithm converged after  11  iterations.
+[1] 7.255907e-04 3.339028e-04 1.068579e-05
+[1] 1.687375e-03 7.453896e-04 1.581128e-05
+Algorithm converged after  17  iterations.
+[1] 7.255907e-04 1.038894e-05 7.372682e-06
+[1] 7.665987e-04 1.137789e-05 6.452274e-06
+[1] 7.653393e-04 1.135967e-05 6.469240e-06
+[1] 7.652797e-04 1.135880e-05 6.470042e-06
+Algorithm converged after  40  iterations.
+[1] 7.255907e-04 1.038894e-05 3.339028e-04
+[1] 1.509826e-03 1.602819e-05 8.478058e-04
+Algorithm converged after  17  iterations.
+[1] 7.255907e-04 7.372682e-06 3.339028e-04
+[1] 1.309803e-03 6.735292e-06 6.411672e-04
+Algorithm converged after  15  iterations.
+[1] 7.255907e-04 1.038894e-05 7.710148e-06 7.372682e-06
+Algorithm converged after  10  iterations.
+[1] 7.255907e-04 1.038894e-05 7.710148e-06 3.339028e-04
+[1] 1.557030e-03 1.257387e-05 9.360562e-06 7.135263e-04
+Algorithm converged after  14  iterations.
+[1] 7.255907e-04 1.038894e-05 7.372682e-06 4.079476e-06
+Algorithm converged after  9  iterations.
+[1] 7.255907e-04 1.038894e-05 3.339028e-04 1.068579e-05
+[1] 2.091552e-03 1.423701e-05 9.284200e-04 1.852597e-05
+Algorithm converged after  20  iterations.
+[1] 7.255907e-04 7.372682e-06 4.079476e-06 3.339028e-04
+[1] 1.221060e-03 7.974687e-06 4.123989e-06 5.890379e-04
+Algorithm converged after  15  iterations.
+[1] 7.255907e-04 7.372682e-06 3.339028e-04 1.068579e-05
+[1] 1.720793e-03 9.088866e-06 7.594579e-04 1.594802e-05
+Algorithm converged after  18  iterations.
+[1] 7.255907e-04 1.038894e-05 7.372682e-06 3.339028e-04
+[1] 1.476600e-03 1.480614e-05 5.706604e-06 7.884928e-04
+Algorithm converged after  15  iterations.
+[1] 0.0007255907 0.0002159911
+Algorithm converged after  2  iterations.
+[1] 7.255907e-04 2.159911e-04 1.584146e-05
+[1] 8.335423e-04 3.582663e-05 2.621317e-05
+[1] 8.338360e-04 3.573728e-05 2.622588e-05
+[1] 8.338417e-04 3.573553e-05 2.622611e-05
+Algorithm converged after  34  iterations.
+[1] 7.255907e-04 2.159911e-04 1.067692e-05
+[1] 8.104725e-04 6.911750e-05 2.113478e-05
+[1] 0.0008104475 0.0000691364 0.0000211342
+Algorithm converged after  26  iterations.
+[1] 7.255907e-04 2.159911e-04 7.577626e-06
+[1] 0.0013437001 0.0000381013 0.0013354022
+[1] 1.377602e-03 3.921817e-05 1.399684e-03
+[1] 1.378186e-03 3.924008e-05 1.400801e-03
+Algorithm converged after  36  iterations.
+[1] 7.255907e-04 2.159911e-04 1.584146e-05 3.374431e-06
+[1] 8.515982e-04 1.426685e-04 2.139747e-05 4.744896e-06
+Algorithm converged after  12  iterations.
+[1] 7.255907e-04 2.159911e-04 1.067692e-05 3.303672e-06
+[1] 8.131911e-04 6.096357e-05 2.376755e-05 4.130179e-06
+[1] 8.140075e-04 5.964974e-05 2.387873e-05 4.078665e-06
+[1] 8.140150e-04 5.962993e-05 2.387954e-05 4.077886e-06
+Algorithm converged after  38  iterations.
+[1] 7.255907e-04 2.159911e-04 7.577626e-06 2.461331e-06
+[1] 6.591663e-04 2.153340e-04 8.137259e-06 1.778027e-06
+Algorithm converged after  18  iterations.
+[1] 7.255907e-04 2.159911e-04 1.584146e-05 1.067692e-05
+[1] 7.988594e-04 2.668687e-05 2.244572e-05 2.778770e-05
+Algorithm converged after  15  iterations.
+[1] 7.255907e-04 2.159911e-04 1.584146e-05 7.577626e-06
+[1] 1.188474e-03 3.633122e-04 3.424077e-05 2.821252e-05
+[1] 1.186477e-03 3.624362e-04 3.419838e-05 2.812335e-05
+Algorithm converged after  30  iterations.
+[1] 7.255907e-04 2.159911e-04 1.067692e-05 7.577626e-06
+[1] 1.220649e-03 2.582865e-04 1.661953e-05 1.060033e-04
+[1] 1.224925e-03 2.585670e-04 1.653516e-05 1.069044e-04
+[1] 1.225185e-03 2.585957e-04 1.653065e-05 1.069566e-04
+[1] 1.225213e-03 2.585988e-04 1.653016e-05 1.069622e-04
+Algorithm converged after  44  iterations.
+Warning messages:
+1: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+2: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+3: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+4: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+5: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+6: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+7: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+8: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+9: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+10: In max(abs(CT), na.rm = T) :
+  no non-missing arguments to max; returning -Inf
+[1] "Best iter parameter is:"
+   gam  rankJ rankA1 rankA2 rankA3 
+     1      0      1      1      2 
+[1] 4.161289e-05 8.123562e-05 1.275468e-04 5.624822e-05
+Algorithm converged after  2  iterations.
+        [,1]     [,2]     [,3]
+[1,] 4.93739 10.86591 52.09565
