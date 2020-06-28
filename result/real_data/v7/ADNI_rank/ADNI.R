@@ -101,7 +101,7 @@ for (i in 1:nrow(RANK)){
 # tune best 2step model
 ml.2step.best = cv.continnum.2step(X.list, Y.list, lambda = 0, parameter.set, 
                                    # center.X = F, scale.X = T, center.Y = F, scale.Y = T, 
-                                   nfolds = 10, criteria = "1se")
+                                   nfolds = 10, criteria = "min")
 
 print("Best 2step parameter is:")
 print(do.call(c, ml.2step.best$parameter))
@@ -125,7 +125,7 @@ ml.2step = continuum.2step(X.list, Y.list, lambda = 0,
 
 # tune best iterate model not orthogonal
 ml.iter.best = cv.continnum.iter(X.list, Y.list, lambda = 0, parameter.set, 
-                                 nfolds = 10, maxiter = 200, criteria = "1se", 
+                                 nfolds = 10, maxiter = 300, criteria = "min", 
                                  orthIndiv = F)
 print("Best iter parameter is:")
 print(do.call(c, ml.iter.best$parameter))
@@ -133,7 +133,7 @@ print(do.call(c, ml.iter.best$parameter))
 file.name = "rank_iter.csv"
 write.table(t(c(myseed, do.call(c, ml.iter.best$parameter))), file = file.name, sep = ',', append = T, col.names = F, row.names = F)
 
-ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
+ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 300,
                                     gam = ml.iter.best$parameter$gam, 
                                     rankJ = ml.iter.best$parameter$rankJ, 
                                     rankA = ml.iter.best$parameter$rankA,

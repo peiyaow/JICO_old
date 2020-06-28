@@ -1,9 +1,9 @@
 # glmnet
 result = as.matrix(result)
-n1 = 34
-n2 = 33
-n3 = 24
-n = n1 + n2 + n3
+# n1 = 34
+# n2 = 33
+# n3 = 24
+# n = n1 + n2 + n3
 
 G = 3
 N = nrow(result)
@@ -62,10 +62,10 @@ B.factor = B
 # jico
 result = as.matrix(result)
 L = 50
-# n1 = 35
-# n2 = 34
-# n3 = 29
-# n = n1 + n2 + n3
+n1 = 35
+n2 = 34
+n3 = 29
+n = n1 + n2 + n3
 
 G = 3
 N = nrow(result)

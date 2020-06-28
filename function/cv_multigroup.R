@@ -254,7 +254,18 @@ cv.continnum.2step = function(X.list, Y.list, lambda = 0, parameter.set, nfolds 
   if (criteria == "1se"){
     absBest = min(rMSE)
     MSEsd = apply(MSE, 2, function(x) sd(sqrt(x)))/sqrt(nfolds)
-    ix = min(which((rMSE - MSEsd) < absBest))
+    # ix = min(which((rMSE - MSEsd) < absBest))
+    # parameter = parameter.set[[ix]]
+    
+    rMSE.mtx = matrix(rMSE, ncol = L+1, byrow = T)
+    absBest.ix = which.min(rMSE.mtx)
+    #    print(absBest.ix)
+    #    absBest.row.ix = (absBest.ix-1)%%(nrow(rMSE.mtx))+1
+    col.ix = ceiling(absBest.ix/nrow(rMSE.mtx))
+    #    print(col.ix)
+    row.ix = min(which((rMSE.mtx[, col.ix] - MSEsd[absBest.ix]) < absBest))
+    #    print(row.ix)
+    ix = col.ix + (row.ix-1)*(L+1)
     parameter = parameter.set[[ix]]
   }
   if (criteria == "min"){
@@ -378,7 +389,18 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
   if (criteria == "1se"){
     absBest = min(rMSE)
     MSEsd = apply(MSE, 2, function(x) sd(sqrt(x)))/sqrt(nfolds)
-    ix = min(which((rMSE - MSEsd) < absBest))
+    # ix = min(which((rMSE - MSEsd) < absBest))
+    # parameter = parameter.set[[ix]]
+    
+    rMSE.mtx = matrix(rMSE, ncol = L+1, byrow = T)
+    absBest.ix = which.min(rMSE.mtx)
+    #    print(absBest.ix)
+    #    absBest.row.ix = (absBest.ix-1)%%(nrow(rMSE.mtx))+1
+    col.ix = ceiling(absBest.ix/nrow(rMSE.mtx))
+    #    print(col.ix)
+    row.ix = min(which((rMSE.mtx[, col.ix] - MSEsd[absBest.ix]) < absBest))
+    #    print(row.ix)
+    ix = col.ix + (row.ix-1)*(L+1)
     parameter = parameter.set[[ix]]
   }
   if (criteria == "min"){
