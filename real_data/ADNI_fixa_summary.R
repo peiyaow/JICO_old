@@ -34,12 +34,28 @@ for (nn in name){
 A = do.call(rbind, A)
 B = do.call(rbind, B)
 
+C = apply(cbind(B, A), 2, function(x) sprintf(x, fmt = "%0.3f"))
+parenth = c(rep(c("\ (", ")\ &\ "), 3), c("\ (", ")\ \\\\"))
+D = cbind(C, matrix(rep(parenth, nrow(C)), nrow = nrow(C), byrow = T))
+printt = D[, do.call(c, lapply(1:8, function(i) c(i,(i+8))))]
+for (i in 1: nrow(printt)){
+  cat(c("& ", printt[i,]), sep = "", fill = T)
+}
+
+
+parenth = c(rep(" & ", 3), " \\\\")
+D = cbind(RANK, matrix(rep(parenth, nrow(RANK)), nrow = nrow(RANK), byrow = T))
+printt = D[, do.call(c, lapply(1:4, function(i) c(i,(i+4))))]
+for (i in 1: nrow(printt)){
+  cat(c(printt[i,]), sep = "", fill = T)
+}
+
 
 RANK = list()
-for (nn in name[-c(1:2, 9:10)]){
+for (nn in name){
   path = paste0("~/Documents/GitHub/continuum/result/real_data/v7/ADNI_fixa/", nn)
   setwd(path)
-  rank <- unique(read.csv("rank_iter.csv", header=FALSE)[,-(1:2)])
+  rank <- unique(read.csv("rank_iter.csv", header=FALSE)[,-(1)])
   RANK = list.append(RANK, rank)
 }
 

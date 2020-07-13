@@ -1,3 +1,4 @@
+label.level = levels(label)
 X.list = lapply(label.level, function(l) X[label == l,])
 Y.list = lapply(label.level, function(l) matrix(Y[label == l]))
 # rank_iter = as.matrix(rank_iter)
@@ -7,33 +8,18 @@ ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
                                     rankA = c(1,1,1),
                                     orthIndiv = F)
 
-# # library(r.jive)
-# # ml.iter$J
-# par(mfcol = c(3,2), mar = rep(0.5, 4))
-# show.image((ml.iter$J[[1]]))
-# show.image((ml.iter$J[[2]]))
-# show.image((ml.iter$J[[3]]))
-# 
-# show.image((ml.iter$I[[1]]))
-# show.image((ml.iter$I[[2]]))
-# show.image((ml.iter$I[[3]]))
-# 
-# dev.off()
-# 
-# 
-# par(mfrow=c(1,2))
-# show.image((do.call(rbind, rev(ml.iter$J))))
-# # abline(h = 145)
-# # abline(h = 145+171)
-# # abline(h = 145+171+178)
-# show.image((do.call(rbind, rev(ml.iter$I))))
-# #show.image((ml.iter$R))
-# dev.off()
+J = do.call(rbind, ml.iter$J)
+# dist(t(J))
+hc = hclust(dist(t(J))^2,"ward.D")
+hc3 = hclust(dist(ml.iter$J[[3]])^2,"ward.D")
+hc2 = hclust(dist(ml.iter$J[[2]])^2,"ward.D")
+hc1 = hclust(dist(ml.iter$J[[1]])^2,"ward.D")
 
+library(r.jive)
 png("JICOheatmap.png", width=400, height=600)
 par(mfrow=c(1,2), mar = rep(0.5, 4))
-show.image(rbind(ml.iter$J[[3]], matrix(rep(0, 93*10), ncol = 93), ml.iter$J[[2]], matrix(rep(0, 93*10), ncol = 93), ml.iter$J[[1]]))
-show.image(rbind(ml.iter$I[[3]], matrix(rep(0, 93*10), ncol = 93), ml.iter$I[[2]], matrix(rep(0, 93*10), ncol = 93), ml.iter$I[[1]]))
+show.image(rbind(ml.iter$J[[3]][hc3$order,hc$order], matrix(rep(0, 93*10), ncol = 93), ml.iter$J[[2]][rev(hc2$order),hc$order], matrix(rep(0, 93*10), ncol = 93), ml.iter$J[[1]][hc1$order,hc$order]))
+show.image(rbind(ml.iter$I[[3]][hc3$order,hc$order], matrix(rep(0, 93*10), ncol = 93), ml.iter$I[[2]][rev(hc2$order),hc$order], matrix(rep(0, 93*10), ncol = 93), ml.iter$I[[1]][hc1$order,hc$order]))
 dev.off()
 
 # show.image(matrix(c(rep(1, 100), rep(-1, 300)), ncol = 10, byrow = T))

@@ -91,7 +91,7 @@ B.jico = B
 
 C = apply(cbind(B, A), 2, function(x) sprintf(x, fmt = "%0.3f"))
 parenth = c(rep(c("\ (", ")\ &\ "), 3), c("\ (", ")\ \\\\"))
-D = cbind(C, matrix(rep(parenth, 8), nrow = 8, byrow = T))
+D = cbind(C, matrix(rep(parenth, nrow(C)), nrow = nrow(C), byrow = T))
 printt = D[, do.call(c, lapply(1:8, function(i) c(i,(i+8))))]
 for (i in 1: nrow(printt)){
   cat(c("& ", printt[i,]), sep = "", fill = T)
