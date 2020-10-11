@@ -77,6 +77,7 @@ for (i in 1: nrow(printt)){
 # OLS1
 # jico
 result = as.matrix(result)
+L = 50
 n1 = 50
 n2 = 50
 n = n1 + n2
