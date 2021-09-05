@@ -3,6 +3,7 @@ library(caret)
 library(glmnet)
 library(methods)
 
+
 source("~/Documents/GitHub/continuum/data/ADNI2/loaddata_mac.R")
 source("~/Documents/GitHub/continuum/function/jive_continuum.R")
 source("~/Documents/GitHub/continuum/function/cv_multigroup.R")
@@ -11,32 +12,33 @@ label.level = levels(label)
 X.list = lapply(label.level, function(l) X[label == l,])
 Y.list = lapply(label.level, function(l) matrix(Y[label == l]))
 # rank_iter = as.matrix(rank_iter)
-ml.iter = continuum.multigroup.iter(X.list, Y.list, lambda = 0, maxiter = 200,
-                                    gam = 1, 
+ml.iter = continuum.multigroup.iter(X.list, 
+                                    Y.list, lambda = 0, maxiter = 200,
+                                    gam = 1e15, 
                                     rankJ = 1, 
                                     rankA = c(1,1,1),
                                     orthIndiv = F)
 
 J = do.call(rbind, ml.iter$J)
 # dist(t(J))
-hc = hclust(dist(t(J))^2,"ward.D")
-hc3 = hclust(dist(ml.iter$J[[3]])^2,"ward.D")
-hc2 = hclust(dist(ml.iter$J[[2]])^2,"ward.D")
-hc1 = hclust(dist(ml.iter$J[[1]])^2,"ward.D")
+hc = hclust(dist(t(J))^2, "ward.D2")
+hc3 = hclust(dist(ml.iter$J[[3]])^2, "ward.D2")
+hc2 = hclust(dist(ml.iter$J[[2]])^2, "ward.D2")
+hc1 = hclust(dist(ml.iter$J[[1]])^2, "ward.D2")
 
 library(r.jive)
 png("JICOheatmap.png", width=400, height=600)
 par(mfrow=c(1,2), mar = rep(0.5, 4))
-matrix.J = rbind(ml.iter$J[[3]][hc3$order,hc$order], 
+matrix.J = rbind(ml.iter$J[[3]][hc3$order, hc$order], 
                  matrix(rep(0, 93*10), ncol = 93), 
-                 ml.iter$J[[2]][rev(hc2$order),hc$order], 
+                 ml.iter$J[[2]][rev(hc2$order), hc$order], 
                  matrix(rep(0, 93*10), ncol = 93), 
-                 ml.iter$J[[1]][hc1$order,hc$order])
-matrix.I = rbind(ml.iter$I[[3]][hc3$order,hc$order], 
+                 ml.iter$J[[1]][hc1$order, hc$order])
+matrix.I = rbind(ml.iter$I[[3]][hc3$order, hc$order], 
                  matrix(rep(0, 93*10), ncol = 93), 
-                 ml.iter$I[[2]][rev(hc2$order),hc$order], 
+                 ml.iter$I[[2]][rev(hc2$order), hc$order], 
                  matrix(rep(0, 93*10), ncol = 93), 
-                 ml.iter$I[[1]][hc1$order,hc$order])
+                 ml.iter$I[[1]][hc1$order, hc$order])
 show.image(matrix.J)
 show.image(matrix.I)
 dev.off()

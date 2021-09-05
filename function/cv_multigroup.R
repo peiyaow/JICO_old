@@ -411,61 +411,61 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
 }
 
 
-continuum = function(X, Y, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, tune = TRUE){
-  n = nrow(X)
-  p = ncol(X)
-  
-  if (center.X){
-    centerValues.X = apply(X, 2, mean)
-  }else{
-    centerValues.X = rep(0, p)
-  }
-  if (scale.X){
-    scaleValues.X = norm(X, type = "f") 
-  }else{
-    scaleValues.X = 1
-  }
-  X = sweep(X, 2, centerValues.X)
-  X = X/scaleValues.X
-  
-  if (center.Y){
-    centerValues.Y = mean(Y)
-  }else{
-    centerValues.Y = 0
-  }
-  if (scale.Y){
-    scaleValues.Y = norm(Y, type = "f") #*sqrt(N)
-  }else{
-    scaleValues.Y = 1
-  }
-  
-  Y = sweep(matrix(Y), 2, centerValues.Y)
-  Y = sweep(matrix(Y), 2, scaleValues.Y, FUN = "/")
-  
-  ml = continuum.ridge.fix(X = X, Y = Y, lambda = lambda, gam = gam, om = m)
-  C = ml$C
-  if (tune){
-    beta.list = lapply(0:m, function(mm) C2beta(X = X, Y = Y, C = C[,0:mm], lambda = lambda)$beta)
-    
-    betaOrigin = list()
-    intercept = list()
-    for (i in 1:(m+1)){
-      betaOrigin[[i]] = beta.list[[i]]/scaleValues.X*scaleValues.Y
-      intercept[[i]] = centerValues.Y - t(betaOrigin[[i]])%*%centerValues.X
-    }
-  }else{ # only compute one beta
-    beta.C = C2beta(X = X, Y = Y, C = C, lambda = lambda)$beta
-    # Yhat.homo.list = lapply(1:G, function(g) X.list[[g]]%*%beta.C)
-    # Y.heter.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.homo.list[[g]])
-    # X.homo.list = lapply(1:G, function(g) X.list[[g]]%*%C%*%SOLVE(t(C)%*%C)%*%t(C))
-    # X.heter.list = lapply(1:G, function(g) X.list[[g]] - X.homo.list[[g]])
-    betaOrigin = beta.C/scaleValues.X*scaleValues.Y
-    intercept = centerValues.Y - t(betaOrigin)%*%centerValues.X
-  }
-  return(list(beta = betaOrigin, intercept = intercept, C = C, 
-              centerValues.X = centerValues.X, centerValues.Y = centerValues.Y, 
-              scaleValues.X = scaleValues.X, scaleValues.Y = scaleValues.Y))
-}
+# continuum = function(X, Y, lambda = 0, gam = 1, m, center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, tune = TRUE){
+#   n = nrow(X)
+#   p = ncol(X)
+#   
+#   if (center.X){
+#     centerValues.X = apply(X, 2, mean)
+#   }else{
+#     centerValues.X = rep(0, p)
+#   }
+#   if (scale.X){
+#     scaleValues.X = norm(X, type = "f") 
+#   }else{
+#     scaleValues.X = 1
+#   }
+#   X = sweep(X, 2, centerValues.X)
+#   X = X/scaleValues.X
+#   
+#   if (center.Y){
+#     centerValues.Y = mean(Y)
+#   }else{
+#     centerValues.Y = 0
+#   }
+#   if (scale.Y){
+#     scaleValues.Y = norm(Y, type = "f") #*sqrt(N)
+#   }else{
+#     scaleValues.Y = 1
+#   }
+#   
+#   Y = sweep(matrix(Y), 2, centerValues.Y)
+#   Y = sweep(matrix(Y), 2, scaleValues.Y, FUN = "/")
+#   
+#   ml = continuum.ridge.fix(X = X, Y = Y, lambda = lambda, gam = gam, om = m)
+#   C = ml$C
+#   if (tune){
+#     beta.list = lapply(0:m, function(mm) C2beta(X = X, Y = Y, C = C[,0:mm], lambda = lambda)$beta)
+#     
+#     betaOrigin = list()
+#     intercept = list()
+#     for (i in 1:(m+1)){
+#       betaOrigin[[i]] = beta.list[[i]]/scaleValues.X*scaleValues.Y
+#       intercept[[i]] = centerValues.Y - t(betaOrigin[[i]])%*%centerValues.X
+#     }
+#   }else{ # only compute one beta
+#     beta.C = C2beta(X = X, Y = Y, C = C, lambda = lambda)$beta
+#     # Yhat.homo.list = lapply(1:G, function(g) X.list[[g]]%*%beta.C)
+#     # Y.heter.list = lapply(1:G, function(g) Y.list[[g]] - Yhat.homo.list[[g]])
+#     # X.homo.list = lapply(1:G, function(g) X.list[[g]]%*%C%*%SOLVE(t(C)%*%C)%*%t(C))
+#     # X.heter.list = lapply(1:G, function(g) X.list[[g]] - X.homo.list[[g]])
+#     betaOrigin = beta.C/scaleValues.X*scaleValues.Y
+#     intercept = centerValues.Y - t(betaOrigin)%*%centerValues.X
+#   }
+#   return(list(beta = betaOrigin, intercept = intercept, C = C, 
+#               centerValues.X = centerValues.X, centerValues.Y = centerValues.Y, 
+#               scaleValues.X = scaleValues.X, scaleValues.Y = scaleValues.Y))
+# }
 
 
 cv.continuum = function(X, Y, lambda = 0, gam = 1, nfolds = 10, m = 5, plot = F, criteria = "min",
