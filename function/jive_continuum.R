@@ -2,10 +2,11 @@ library(quadprog)
 library(nleqslv)
 library(Matrix)
 library(rlist)
+library(MASS)
 
 SOLVE = function(x){
   if (sum(dim(x))){
-    return(solve(x))
+    return(ginv(x))
   }else{
     return(x)
   }
@@ -112,7 +113,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   B = E2%*%Z_old
   fn = function(rho){
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     q = tau*rho*d
     Mq = M%*%q
     z = Mq/norm(Mq, "2")
@@ -126,7 +127,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   }
   
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+  M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
   q = tau*rho*d
   Mq = M%*%q
   Z = Mq/norm(Mq, "2")
@@ -145,7 +146,7 @@ continuum = function(X, Y, G, lambda, gam, om,
     }
     
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     q = tau*rho*d
     Mq = M%*%q
     z = Mq/norm(Mq, "2")
@@ -156,7 +157,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   }
   C = V%*%Z
   C = C[,0:min(ncol(C), om)]
-  a = V%*%solve(E)^(1/2)%*%Z
+  a = V%*%ginv(E)^(1/2)%*%Z
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E, D = D, U = as.matrix(U)))
 }
 
@@ -251,6 +252,11 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   D.heter = matrix(,nrow=0, ncol=0)
   V.heter = matrix(,nrow=p, ncol=0)
   Z.heter = matrix(,nrow=0, ncol=0)
+  
+  U.homo.list = lapply(1:G, function(g) matrix(0, nrow = n[g], ncol = 0))
+  D.homo = matrix(,nrow=0, ncol=0)
+  V.homo = matrix(,nrow=p, ncol=0)
+  Z.homo = matrix(,nrow=0, ncol=0)
   
   while (nrun < maxiter & !converged){
     # initialization
@@ -738,7 +744,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)
+    M = ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -762,7 +768,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   
   #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = solve(A)
+  M = ginv(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -774,7 +780,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -801,7 +807,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
     # if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
     #   break
     # }
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -813,7 +819,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   }
   C = V%*%Z
   C = C[,0:min(ncol(C), om)]
-  a = V%*%solve(E)^(1/2)%*%Z
+  a = V%*%ginv(E)^(1/2)%*%Z
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E))
 }
 
@@ -848,7 +854,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -864,7 +870,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   
   #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+  M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -872,7 +878,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   B = E%*%cbind(t(U)%*%Uhomo, Z)
   rho0 = rho
   
-  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+  while (ncol(Z) < om & rcond(t(B)%*%ginv(A)%*%B) > 1e-10){
     nleqslv.res = nleqslv(rho0, fn)
     rho = nleqslv.res$x
     if (nleqslv.res$termcd != 1){
@@ -881,10 +887,10 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
     }
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+    if (rcond(t(B)%*%ginv(A)%*%B) < 1e-10){
       break
     }
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -934,7 +940,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)
+    M = ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -952,7 +958,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   
   #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = solve(A)
+  M = ginv(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -964,7 +970,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -972,7 +978,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
+  while (ncol(Z) < om & rcond(t(B)%*%ginv(A)%*%B) > 1e-10){
     #    print(1)
     #    print(rcond(t(B)%*%solve(A)%*%B))
     nleqslv.res = nleqslv(rho0, fn, method = "Newton", control = list(maxit = 50))
@@ -985,10 +991,10 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
     #    print(2)
     #    print(rcond(t(B)%*%solve(A)%*%B))
-    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
+    if (rcond(t(B)%*%ginv(A)%*%B) < 1e-10){
       break
     }
-    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
+    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -1000,7 +1006,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   }
   C = V%*%Z
   C = C[,0:min(ncol(C), om)]
-  a = V%*%solve(E)^(1/2)%*%Z
+  a = V%*%ginv(E)^(1/2)%*%Z
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E))
 }
 
