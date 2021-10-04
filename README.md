@@ -1,1 +1,1 @@
-# continuum
+# R implementation of JICO
