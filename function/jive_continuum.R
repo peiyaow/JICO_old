@@ -80,20 +80,25 @@ continuum = function(X, Y, G, lambda, gam, om,
   
   if (vertical){
     s = t(X)%*%Y
-    svd.X = svd(X)
-    d = svd.X$d
-    V = svd.X$v
-    U = svd.X$u
-    m = rankMatrix(X)[1]
-    e = (d^2)[1:m]
-    D = DIAG(d[1:m])
-    E = DIAG(e)
-    V = V[,1:m]
-    U = U[,1:m]
+    # svd.X = svd(X)
+    # d = svd.X$d
+    # V = svd.X$v
+    # U = svd.X$u
+    # m = rankMatrix(X)[1]
+    # e = (d^2)[1:m]
+    # D = DIAG(d[1:m])
+    # E = DIAG(e)
+    # V = V[,1:m]
+    # U = U[,1:m]
+    UDVZ = initialize.UDVZ(X)
+    D = UDVZ$D
+    E = UDVZ$E
+    V = UDVZ$V
+    U = UDVZ$U
+    e = UDVZ$e
+    m = UDVZ$m
     d = t(V)%*%s
-    
     E2 = D%*%t(U)%*%U_old%*%D_old
-    
   }else{
     svd.tX = svd(t(X))
     d = svd.tX$d
@@ -113,7 +118,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   B = E2%*%Z_old
   fn = function(rho){
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     q = tau*rho*d
     Mq = M%*%q
     z = Mq/norm(Mq, "2")
@@ -127,7 +132,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   }
   
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
   q = tau*rho*d
   Mq = M%*%q
   Z = Mq/norm(Mq, "2")
@@ -146,7 +151,7 @@ continuum = function(X, Y, G, lambda, gam, om,
     }
     
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     q = tau*rho*d
     Mq = M%*%q
     z = Mq/norm(Mq, "2")
@@ -161,10 +166,33 @@ continuum = function(X, Y, G, lambda, gam, om,
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E, D = D, U = as.matrix(U)))
 }
 
+initialize.UDVZ = function(X){
+  svd.X = svd(X)
+  d = svd.X$d
+  V = svd.X$v
+  U = svd.X$u
+  m = rankMatrix(X)[1]
+  
+  if (m > 0){
+    e = (d^2)[1:m]
+    D = DIAG(d[1:m])
+    E = DIAG(e)
+    V = V[,1:m]
+    U = U[,1:m]
+  }else{
+    U = matrix(,nrow=nrow(X), ncol=m)
+    D = matrix(,nrow=m, ncol=m)
+    E = matrix(,nrow=m, ncol=m)
+    V = matrix(,nrow=ncol(X), ncol=m)
+    e=0
+  }
+  Z = matrix(,nrow=m, ncol=0)
+  return(list(U=as.matrix(U), D=D, V=as.matrix(V), Z=Z, E=E, e=e, m=m))
+}
 
 continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, maxiter = 1000, conv = 1e-7, 
                                      center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = F,
-                                     I.initial = NULL){
+                                     I.initial = NULL, sd = 0){
   G = length(X.list)
   centerValues.X <- list()
   scaleValues.X <- list()
@@ -227,15 +255,25 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   Y.homo = Y
   Y.homo.list = Y.list
   
+  # C = matrix(0, p, rankJ)
+  # Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
+  # P = matrix(0, p, p)
+  C = matrix(rnorm(p*rankJ, 0, sd), p, rankJ)
+  Cind = lapply(1:G, function(g) matrix(rnorm(p*rankA[g], 0, sd), p, rankA[g]))
+  Cind_tot = do.call(cbind, Cind)
+  P = Cind_tot%*%SOLVE(t(Cind_tot)%*%Cind_tot)%*%t(Cind_tot)
+  
   if (is.null(I.initial)){
-    X.heter.list = lapply(1:G, function(g) matrix(0, nrow = nrow(X.list[[g]]), ncol = p))
+    # X.heter.list = lapply(1:G, function(g) matrix(0, nrow = nrow(X.list[[g]]), ncol = p))
+    X.heter = X%*%P
+    X.heter.list = lapply(index.list, function(ixs) as.matrix(X.heter[ixs,]))
+    # X.heter.list = lapply(1:G, function(g) X.list[[g]]%*%Cind[[g]]%*%SOLVE(t(Cind[[g]])%*%Cind[[g]])%*%t(Cind[[g]]))
+    X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])#%*%C%*%SOLVE(t(C)%*%C)%*%t(C))X.homo.list = lapply(1:G, function(g) X.list[[g]])#%*%C%*%SOLVE(t(C)%*%C)%*%t(C))
   }else{
     X.heter.list = I.initial
+    X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])
   }
   
-  C = matrix(0, p, rankJ)
-  Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
-  P = matrix(0, p, p)
   R = X
   R[,] = 0
   
@@ -248,15 +286,34 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   ct.homo = matrix(0, nrow = rankJ, ncol = 1)
   ct.heter = lapply(1:G, function(g) matrix(0, nrow = rankA[g], ncol = 1))
   
-  U.heter = matrix(,nrow=N, ncol=0)
-  D.heter = matrix(,nrow=0, ncol=0)
-  V.heter = matrix(,nrow=p, ncol=0)
-  Z.heter = matrix(,nrow=0, ncol=0)
+  UDVZ.heter.list = lapply(1:G, function(g) initialize.UDVZ(X.heter.list[[g]]))
+  U.heter.list = lapply(1:G, function(g) UDVZ.heter.list[[g]]$U)
+  Z.heter.list = lapply(1:G, function(g) UDVZ.heter.list[[g]]$Z)
+  V.heter.list = lapply(1:G, function(g) UDVZ.heter.list[[g]]$V)
+  D.heter.list = lapply(1:G, function(g) UDVZ.heter.list[[g]]$D)
   
-  U.homo.list = lapply(1:G, function(g) matrix(0, nrow = n[g], ncol = 0))
-  D.homo = matrix(,nrow=0, ncol=0)
-  V.homo = matrix(,nrow=p, ncol=0)
-  Z.homo = matrix(,nrow=0, ncol=0)
+  U.heter = as.matrix(do.call(bdiag, U.heter.list))
+  Z.heter = as.matrix(do.call(bdiag, Z.heter.list))
+  V.heter = do.call(rbind, V.heter.list)
+  D.heter = as.matrix(do.call(bdiag, D.heter.list))
+  
+  # U.heter = matrix(,nrow=N, ncol=0)
+  # D.heter = matrix(,nrow=0, ncol=0)
+  # V.heter = matrix(,nrow=p, ncol=0)
+  # Z.heter = matrix(,nrow=0, ncol=0)
+  
+  X.homo = do.call(rbind, X.homo.list)
+  UDVZ.homo = initialize.UDVZ(X.homo)
+  U.homo = UDVZ.homo$U
+  Z.homo = UDVZ.homo$Z
+  V.homo = UDVZ.homo$V
+  D.homo = UDVZ.homo$D
+  U.homo.list = lapply(index.list, function(ixs) as.matrix(U.homo[ixs,]))
+  
+  # U.homo.list = lapply(1:G, function(g) matrix(0, nrow = n[g], ncol = 0))
+  # D.homo = matrix(,nrow=0, ncol=0)
+  # V.homo = matrix(,nrow=p, ncol=0)
+  # Z.homo = matrix(,nrow=0, ncol=0)
   
   while (nrun < maxiter & !converged){
     # initialization
@@ -284,7 +341,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
         Z.homo = ml.homo$Z
         V.homo = ml.homo$V
         D.homo = ml.homo$D
-        U.homo.list = lapply(index.list, function(ixs) U.homo[ixs,])
+        U.homo.list = lapply(index.list, function(ixs) as.matrix(U.homo[ixs,]))
       }
     }
     U = list.append(U, C)
@@ -744,7 +801,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)
+    M = solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -768,7 +825,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   
   #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = ginv(A)
+  M = solve(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -780,7 +837,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -807,7 +864,7 @@ continuum.ridge.fix = function(X, Y, G, lambda, gam, om, vertical = TRUE, verbos
     # if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
     #   break
     # }
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -854,7 +911,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -870,7 +927,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   
   #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+  M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -878,7 +935,7 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
   B = E%*%cbind(t(U)%*%Uhomo, Z)
   rho0 = rho
   
-  while (ncol(Z) < om & rcond(t(B)%*%ginv(A)%*%B) > 1e-10){
+  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
     nleqslv.res = nleqslv(rho0, fn)
     rho = nleqslv.res$x
     if (nleqslv.res$termcd != 1){
@@ -887,10 +944,10 @@ continuum.ridge.res.fix = function(X, Y, Uhomo, lambda, gam, om){
     }
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    if (rcond(t(B)%*%ginv(A)%*%B) < 1e-10){
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
       break
     }
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -940,7 +997,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)
+    M = solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -958,7 +1015,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   
   #  A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-  M = ginv(A)
+  M = solve(A)
   #  q = tau*rho^(gam-1)*d
   q = tau*rho*d
   Mq = M%*%q
@@ -970,7 +1027,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
   fn = function(rho){
     #    A = diag(tau^2*rho^(gam-2)*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*rho^(gam-2)*tau^2*E
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q
@@ -978,7 +1035,7 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
     return(t(z)%*%E%*%z + n*lambda - rho)
   }
   
-  while (ncol(Z) < om & rcond(t(B)%*%ginv(A)%*%B) > 1e-10){
+  while (ncol(Z) < om & rcond(t(B)%*%solve(A)%*%B) > 1e-10){
     #    print(1)
     #    print(rcond(t(B)%*%solve(A)%*%B))
     nleqslv.res = nleqslv(rho0, fn, method = "Newton", control = list(maxit = 50))
@@ -991,10 +1048,10 @@ continuum.ridge.fixm = function(X, Y, G, lambda, gam, om, m, vertical = TRUE){
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
     #    print(2)
     #    print(rcond(t(B)%*%solve(A)%*%B))
-    if (rcond(t(B)%*%ginv(A)%*%B) < 1e-10){
+    if (rcond(t(B)%*%solve(A)%*%B) < 1e-10){
       break
     }
-    M = ginv(A)- ginv(A)%*%B%*%SOLVE(t(B)%*%ginv(A)%*%B)%*%t(B)%*%ginv(A)
+    M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
     #    q = tau*rho^(gam-1)*d
     q = tau*rho*d
     Mq = M%*%q

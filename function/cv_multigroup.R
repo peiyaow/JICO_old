@@ -362,7 +362,7 @@ continuum.2step = function(X.list, Y.list, lambda = 0, gam = 1, rankJ, rankA,
 
 cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 100,
                              center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = T, 
-                             plot = F, criteria = c("min", "1se")){
+                             plot = F, criteria = c("min", "1se"), sd = 0){
   G = length(X.list)
   flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds, list = TRUE, returnTrain = FALSE))
   MSE.list = list()
@@ -376,7 +376,8 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
     ml.list = lapply(parameter.set, function(parameter) 
       continuum.multigroup.iter(X.train.list, Y.train.list, lambda = lambda, maxiter = maxiter,     
                       gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA, 
-                      center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, orthIndiv = orthIndiv))
+                      center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, orthIndiv = orthIndiv,
+                      sd = sd))
     Yhat.list = lapply(ml.list, function(ml) 
       do.call(rbind, lapply(1:G, function(g) as.numeric(ml$intercept[[g]]) + X.val.list[[g]]%*%ml$beta.C[[g]] + X.val.list[[g]]%*%ml$beta.Cind[[g]])))
     MSE.list[[k]] = sapply(Yhat.list, function(Yhat) mean((Y.val - Yhat)^2))
