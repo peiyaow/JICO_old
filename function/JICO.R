@@ -372,9 +372,9 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     
     XC.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]])
     
-    for (g in 1:G){
-      print(t(X.homo.list[[g]]%*%C)%*%temp[[g]]%*%Cind[[g]])
-    }
+    # for (g in 1:G){
+    #   print(t(X.homo.list[[g]]%*%C)%*%temp[[g]]%*%Cind[[g]])
+    # }
     ct.heter = lapply(1:G, function(g) 
       diag((t(XC.list[[g]])%*%XC.list[[g]])^(gam-1))*(t(XC.list[[g]])%*%Y.heter.list[[g]])^2)
     
@@ -392,9 +392,9 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     R = do.call(rbind, R.list)
     
     if (gam > 1e5){
-      if (!nrun%%10){
-        print(norm(R, type = "f"))
-      }
+      # if (!nrun%%10){
+      #   print(norm(R, type = "f"))
+      # }
       if (norm(Rlast - R, type = "f") <= conv){
         converged <- T
       }
@@ -402,9 +402,9 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
       CT1 = (ct.homo - ct.homo.last)/ct.homo.last
       CT2 = lapply(1:G, function(g) as.vector((ct.heter[[g]]-ct.heter.last[[g]])/ct.heter.last[[g]]))
       CT = c(CT1, do.call(c, CT2))
-      if (!nrun%%10){
-        print(c(ct.homo, do.call(c, ct.heter)))
-      }
+      # if (!nrun%%10){
+      #   print(c(ct.homo, do.call(c, ct.heter)))
+      # }
       if (max(abs(CT), na.rm = T) <= conv){
         converged <- T
       }
@@ -442,13 +442,30 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
               converged = converged, nrun = nrun))
 }
 
-
+createFolds <- function(strat_id, k) {
+  if(k > length(strat_id)) {
+    k <- length(strat_id)
+  }	
+  perm <- sample(length(strat_id))
+  strat_id <- factor(strat_id, levels=sample(unique(strat_id)))
+  
+  strat_order <- order(strat_id[perm])
+  
+  num_item_per_fold_ceil <- ceiling(length(strat_id) / k)
+  
+  fold_ids <- rep(seq_len(k), times= num_item_per_fold_ceil)
+  fold_ids <- fold_ids[seq_along(strat_id)]
+  
+  folds <- split(perm[strat_order], fold_ids)
+  names(folds) <- paste0("Fold", seq_len(k))	
+  return(folds)
+}
 
 cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 100,
                              center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = T, 
                              plot = F, criteria = c("min", "1se"), sd = 0){
   G = length(X.list)
-  flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds, list = TRUE, returnTrain = FALSE))
+  flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds))
   MSE.list = list()
   for (k in 1:nfolds){
     X.train.list = lapply(1:G, function(g) X.list[[g]][unlist(flds.list[[g]][-k]), ])
