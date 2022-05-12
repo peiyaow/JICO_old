@@ -4,7 +4,60 @@ library(Matrix)
 library(rlist)
 library(MASS)
 
+parameter.set.G_2 = function(maxrankA, maxrankJ, gamma){
+  # generate set of hyperparameters when there are G = 2 groups. 
+  
+  # maxrankA: the maximum rank for individual component
+  # maxrankJ: the maximum rank for joint component
+  # gamma: the fixed gamma parameter
+  
+  parameter.set <- list()
+  for(rankA1 in 0:maxrankA)
+    for(rankA2 in 0:maxrankA)
+      for (rankJ in 0:maxrankJ){
+        parameter.set = list.append(parameter.set, list(rankA = c(rankA1, rankA2), rankJ = rankJ, gam = gamma))
+      }
+  return(parameter.set)
+}
+
+parameter.set.G_3 = function(maxrankA, maxrankJ, gamma){
+  # generate set of hyperparameters when there are G = 3 groups. 
+  
+  # maxrankA: the maximum rank for individual component
+  # maxrankJ: the maximum rank for joint component
+  # gamma: the fixed gamma parameter
+  
+  parameter.set <- list()
+  for(rankA1 in 0:maxrankA)
+    for(rankA2 in 0:maxrankA)
+      for (rankA3 in 0:maxrankA){
+        for (rankJ in 0:maxrankJ){
+          parameter.set = list.append(parameter.set, list(rankA = c(rankA1, rankA2, rankA3), rankJ = rankJ, gam = gamma))
+        }
+      }
+  return(parameter.set)
+}
+
+parameter.set.rankA_eq = function(G, maxrankA, maxrankJ, gamma.list){
+  # generate set of hyperparameters when the individual ranks are the same
+  
+  # G: number of groups
+  # maxrankA: the maximum rank for individual component
+  # maxrankJ: the maximum rank for joint component
+  # gamma.list: the list of candidate gamma parameters to be tuned
+  
+  parameter.set <- list() 
+  for (gam in gamma.list)
+    for(rankA in 0:maxrankA)
+      for (rankJ in 0:maxrankJ){
+        parameter.set = list.append(parameter.set, list(rankA = rep(rankA, G), rankJ = rankJ, gam = gam))
+      }
+  return(parameter.set)
+}
+
 SOLVE = function(x){
+  # algorithm to inverse a matrix x
+  
   if (sum(dim(x))){
     return(ginv(x))
   }else{
@@ -13,6 +66,8 @@ SOLVE = function(x){
 }
 
 DIAG = function(e){
+  # given diagonal element, return a matrix 
+  
   if (length(e) > 1){
     return(diag(e))
   }else{
@@ -20,8 +75,13 @@ DIAG = function(e){
   }
 }
 
-# C output from continuum.ridge
 C2beta = function(X, Y, C, lambda){
+  # Compute the coefficients from the continuum regression (CR) algorithm
+  
+  # C: the weight matrix computed from CR algorithm
+  # X, Y: the input data pairs for CR algorithm
+  # lambda: regularization parameter if L2 penalization is used for CR. JICO uses zero as default
+  
   n = nrow(X)
   X.mean = apply(X, 2, mean)
   Y.mean = mean(Y)
@@ -38,49 +98,37 @@ C2beta = function(X, Y, C, lambda){
   return(list(intercept = intercept, beta = beta.C, alpha = alpha.C, coef = matrix(c(intercept, beta.C))))
 }
 
-continuum = function(X, Y, G, lambda, gam, om, 
+continuum = function(X, Y, lambda, gam, om, 
                      U_old=matrix(,nrow=nrow(X), ncol=0), D_old=matrix(,nrow=0, ncol=0), V_old=matrix(,nrow=0, ncol=0), Z_old=matrix(,nrow=0, ncol=0), 
-                     vertical = TRUE, verbose = FALSE){
+                     verbose = FALSE){
+  # Implement the main CR algorithm used in JICO
+  
+  # X, Y: the input data pairs for continuum regression algorithm
+  # lambda: regularization parameter if L2 penalization is used for CR. JICO uses 0 as default
+  # gam: gamma parameter in CR algorithm. Set gam=0 for OLS model, gam=0.5 for PLS model, gam >= 1e10 for PCR model
+  # om: the desired number of weight vectors to achieve in the CR algorithm, i.e. the predefined rank of joint or individual componenet
+  # U_old, D_old, V_old, Z_old: the given inputs U, D, V, Z from the previous JICO iteration. Detailed notation can be found in JICO paper supplement Web Appendix B.
+  # verbose: if it's desired to print out intermediate outputs
+
+  # ----------- initialization ----------- #
   n = nrow(X)
   p = ncol(X)
   
-  if (vertical){
-    s = t(X)%*%Y
-    # svd.X = svd(X)
-    # d = svd.X$d
-    # V = svd.X$v
-    # U = svd.X$u
-    # m = rankMatrix(X)[1]
-    # e = (d^2)[1:m]
-    # D = DIAG(d[1:m])
-    # E = DIAG(e)
-    # V = V[,1:m]
-    # U = U[,1:m]
-    UDVZ = initialize.UDVZ(X)
-    D = UDVZ$D
-    E = UDVZ$E
-    V = UDVZ$V
-    U = UDVZ$U
-    e = UDVZ$e
-    m = UDVZ$m
-    d = t(V)%*%s
-    E2 = D%*%t(U)%*%U_old%*%D_old
-  }else{
-    svd.tX = svd(t(X))
-    d = svd.tX$d
-    V = svd.tX$v
-    m = length(d[d > 1e-5])
-    e = (d^2)[1:m]
-    E = DIAG(e)
-    V = V[,1:m]
-    d = E^(1/2)%*%t(V)%*%Y
-  }
+  s = t(X)%*%Y
+  UDVZ = initialize.UDVZ(X)
+  D = UDVZ$D
+  E = UDVZ$E
+  V = UDVZ$V
+  U = UDVZ$U
+  e = UDVZ$e
+  m = UDVZ$m
+  d = t(V)%*%s
+  E2 = D%*%t(U)%*%U_old%*%D_old
   
+  # default to 1
   tau = 1
-  # find a good initial value for rho
   
-  #E_all = cbind(E2, E)
-  #Z_all = as.matrix(bdiag(Z_old, Z))
+  # ----------- find a good initial value for rho ----------- #
   B = E2%*%Z_old
   fn = function(rho){
     A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
@@ -97,6 +145,7 @@ continuum = function(X, Y, G, lambda, gam, om,
     print(nleqslv.res$termcd)
   }
   
+  # ----------- iteration on the first step ----------- #
   A = diag(tau^2*(gam*rho-(gam-1)*(n*lambda)), m) + (1-gam)*tau^2*E
   M = solve(A)- solve(A)%*%B%*%SOLVE(t(B)%*%solve(A)%*%B)%*%t(B)%*%solve(A)
   q = tau*rho*d
@@ -108,6 +157,7 @@ continuum = function(X, Y, G, lambda, gam, om,
   B = E_all%*%Z_all
   rho0 = rho
   
+  # ----------- iteration on the following steps if om > 1 ----------- #
   while (ncol(Z) < om){
     nleqslv.res = nleqslv(rho0, fn, method = "Newton", global = "none", control = list(maxit = 150))
     rho = nleqslv.res$x
@@ -126,13 +176,18 @@ continuum = function(X, Y, G, lambda, gam, om,
     B = E_all%*%Z_all
     rho0 = rho
   }
+  
+  # ----------- compute final results ----------- 
   C = V%*%Z
-  C = C[,0:min(ncol(C), om)]
+  C = C[, 0:min(ncol(C), om)]
   a = V%*%ginv(E)^(1/2)%*%Z
+  
   return(list(C = as.matrix(C), a = a, V = as.matrix(V), Z = Z, E = E, D = D, U = as.matrix(U)))
 }
 
 initialize.UDVZ = function(X){
+  # helper function to compute the SVD results from a given matrix X 
+  
   svd.X = svd(X)
   d = svd.X$d
   V = svd.X$v
@@ -157,9 +212,27 @@ initialize.UDVZ = function(X){
 }
 
 
-continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, maxiter = 1000, conv = 1e-7, 
+continuum.multigroup.iter = function(X.list, Y.list, lambda = 0, gam, rankJ, rankA, maxiter = 1000, conv = 1e-7, 
                                      center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = F,
                                      I.initial = NULL, sd = 0){
+  # main function to iteratively solve the JICO algorithm
+  
+  # X.list: the list of observational data in each group
+  # Y.list: the list of response in each group
+  # lambda: regularization parameter if L2 penalization is used for CR. JICO uses 0 as default
+  # gam: gamma parameter in CR algorithm. Set gam=0 for OLS model, gam=0.5 for PLS model, gam >= 1e10 for PCR model
+  # rankJ: the rank for the joint component
+  # rankA: the ranks for individual components
+  # maxiter: the maximum of iterations to conduct before convergence
+  # conv: the tolerance level for convergence
+  # center.X: if centralization is to be performed on X
+  # scale.X: if scaling is performed on X
+  # center.Y: if centralization is to be performed on Y
+  # scale.Y: if scaling is performed on Y
+  # orthIndiv: if we impose the orthogonality constraint on individual components
+  # I.initial: the initial value for individual components
+  # sd: standard deviation used to generate random initial values for individual weight vectors
+  
   G = length(X.list)
   centerValues.X <- list()
   scaleValues.X <- list()
@@ -207,6 +280,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   X = do.call(rbind, X.list)
   Y = do.call(rbind, Y.list)
   
+  # when gam == 0, it is equivalent to OLS. Either rankJ or rankA needs to be 0 and at most to be 1
   if (gam == 0){
     rankJ = min(1, rankJ)
     if (rankJ){
@@ -222,20 +296,15 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   Y.homo = Y
   Y.homo.list = Y.list
   
-  # C = matrix(0, p, rankJ)
-  # Cind = lapply(1:G, function(g) matrix(0, p, rankA[g]))
-  # P = matrix(0, p, p)
   C = matrix(rnorm(p*rankJ, 0, sd), p, rankJ)
   Cind = lapply(1:G, function(g) matrix(rnorm(p*rankA[g], 0, sd), p, rankA[g]))
   Cind_tot = do.call(cbind, Cind)
   P = Cind_tot%*%SOLVE(t(Cind_tot)%*%Cind_tot)%*%t(Cind_tot)
   
   if (is.null(I.initial)){
-    # X.heter.list = lapply(1:G, function(g) matrix(0, nrow = nrow(X.list[[g]]), ncol = p))
     X.heter = X%*%P
     X.heter.list = lapply(index.list, function(ixs) as.matrix(X.heter[ixs,]))
-    # X.heter.list = lapply(1:G, function(g) X.list[[g]]%*%Cind[[g]]%*%SOLVE(t(Cind[[g]])%*%Cind[[g]])%*%t(Cind[[g]]))
-    X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])#%*%C%*%SOLVE(t(C)%*%C)%*%t(C))X.homo.list = lapply(1:G, function(g) X.list[[g]])#%*%C%*%SOLVE(t(C)%*%C)%*%t(C))
+    X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])
   }else{
     X.heter.list = I.initial
     X.homo.list = lapply(1:G, function(g) X.list[[g]] - X.heter.list[[g]])
@@ -264,11 +333,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   V.heter = do.call(rbind, V.heter.list)
   D.heter = as.matrix(do.call(bdiag, D.heter.list))
   
-  # U.heter = matrix(,nrow=N, ncol=0)
-  # D.heter = matrix(,nrow=0, ncol=0)
-  # V.heter = matrix(,nrow=p, ncol=0)
-  # Z.heter = matrix(,nrow=0, ncol=0)
-  
   X.homo = do.call(rbind, X.homo.list)
   UDVZ.homo = initialize.UDVZ(X.homo)
   U.homo = UDVZ.homo$U
@@ -276,11 +340,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
   V.homo = UDVZ.homo$V
   D.homo = UDVZ.homo$D
   U.homo.list = lapply(index.list, function(ixs) as.matrix(U.homo[ixs,]))
-  
-  # U.homo.list = lapply(1:G, function(g) matrix(0, nrow = n[g], ncol = 0))
-  # D.homo = matrix(,nrow=0, ncol=0)
-  # V.homo = matrix(,nrow=p, ncol=0)
-  # Z.homo = matrix(,nrow=0, ncol=0)
   
   while (nrun < maxiter & !converged){
     # initialization
@@ -299,8 +358,7 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
         ml.homo = svd(X.homo%*%(diag(p) - P), nu = rankJ, nv = rankJ)
         C = ml.homo$v
       }else{
-        # ml.homo = continuum.ridge.fix(X.homo%*%(diag(p) - P), Y.homo, G, lambda = lambda, gam = gam, om = rankJ)
-        ml.homo = continuum(X.homo%*%(diag(p) - P), Y.homo, G, lambda = lambda, gam = gam, om = rankJ,
+        ml.homo = continuum(X.homo%*%(diag(p) - P), Y.homo, lambda = lambda, gam = gam, om = rankJ,
                             U_old=U.heter, D_old=D.heter, V_old=V.heter, Z_old=Z.heter)
         C = ml.homo$C
         
@@ -339,25 +397,19 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
         }
       }
       temp[[g]] <- temp[[g]]%*%(diag(p) - tempC%*%SOLVE(t(tempC)%*%tempC)%*%t(tempC))
-      # U.heter.list[[g]] = matrix(,nrow=n[g], ncol=0)
-      # D.heter.list[[g]] = matrix(,nrow=0, ncol=0)
-      # V.heter.list[[g]] = matrix(,nrow=p, ncol=0)
-      # Z.heter.list[[g]] = matrix(,nrow=0, ncol=0)
-      #       if (rankA[g]){
+      
       if (gam == 1e10){
         ml.heter = svd(temp[[g]], nu = rankA[g], nv = rankA[g])
         Cind[[g]] = ml.heter$v
       }else{
-        # ml.heter = continuum.ridge.fix(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g])
-        ml.heter = continuum(temp[[g]], Y.heter.list[[g]], 1, lambda = lambda, gam = gam, om = rankA[g], U_old=U.homo.list[[g]], D_old=D.homo, V_old=V.homo, Z_old=Z.homo)
+        ml.heter = continuum(temp[[g]], Y.heter.list[[g]], lambda = lambda, gam = gam, om = rankA[g], U_old=U.homo.list[[g]], D_old=D.homo, V_old=V.homo, Z_old=Z.homo)
         Cind[[g]] = ml.heter$C
         
         U.heter.list[[g]] = ml.heter$U
         Z.heter.list[[g]] = ml.heter$Z
         V.heter.list[[g]] = ml.heter$V
         D.heter.list[[g]] = ml.heter$D
-        # print(dim(ml.heter$U))
-        #       }
+        
       }
     }
     
@@ -372,9 +424,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     
     XC.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]])
     
-    # for (g in 1:G){
-    #   print(t(X.homo.list[[g]]%*%C)%*%temp[[g]]%*%Cind[[g]])
-    # }
     ct.heter = lapply(1:G, function(g) 
       diag((t(XC.list[[g]])%*%XC.list[[g]])^(gam-1))*(t(XC.list[[g]])%*%Y.heter.list[[g]])^2)
     
@@ -388,13 +437,12 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
     Y.homo = do.call(rbind, Y.homo.list)
     X.heter.list = lapply(1:G, function(g) X.heter.list[[g]]%*%Cind[[g]]%*%SOLVE(t(Cind[[g]])%*%Cind[[g]])%*%t(Cind[[g]]))
     
+    
+    # compute residuals
     R.list = lapply(1:G, function(g) X.list[[g]] - X.homo.list[[g]] - X.heter.list[[g]])
     R = do.call(rbind, R.list)
     
     if (gam > 1e5){
-      # if (!nrun%%10){
-      #   print(norm(R, type = "f"))
-      # }
       if (norm(Rlast - R, type = "f") <= conv){
         converged <- T
       }
@@ -402,9 +450,6 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
       CT1 = (ct.homo - ct.homo.last)/ct.homo.last
       CT2 = lapply(1:G, function(g) as.vector((ct.heter[[g]]-ct.heter.last[[g]])/ct.heter.last[[g]]))
       CT = c(CT1, do.call(c, CT2))
-      # if (!nrun%%10){
-      #   print(c(ct.homo, do.call(c, ct.heter)))
-      # }
       if (max(abs(CT), na.rm = T) <= conv){
         converged <- T
       }
@@ -443,6 +488,8 @@ continuum.multigroup.iter = function(X.list, Y.list, lambda, gam, rankJ, rankA, 
 }
 
 createFolds <- function(strat_id, k) {
+  # function to create folds for cross validation
+  
   if(k > length(strat_id)) {
     k <- length(strat_id)
   }	
@@ -464,6 +511,25 @@ createFolds <- function(strat_id, k) {
 cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds = 10, maxiter = 100,
                              center.X = TRUE, scale.X = TRUE, center.Y = TRUE, scale.Y = TRUE, orthIndiv = T, 
                              plot = F, criteria = c("min", "1se"), sd = 0){
+  # function to perform cross validation to select the best parameter
+  
+  # X.list: the list of observational data in each group
+  # Y.list: the list of response in each group
+  # lambda: regularization parameter if L2 penalization is used for CR. JICO uses 0 as default
+  # parameter.set: the set of parameters to be tuned on
+  # nfolds: number of folds to create to perform CV
+  # maxiter: the maximum of iterations to conduct for JICO before convergence
+  # center.X: if centralization is to be performed on X
+  # scale.X: if scaling is performed on X
+  # center.Y: if centralization is to be performed on Y
+  # scale.Y: if scaling is performed on Y
+  # orthIndiv: if we impose the orthogonality constraint on individual components
+  # plot: if we want to plot the rMSE vs different parameters
+  # criteria: criteria for selecting the best parameter. 
+  #           use "min" to choose the parameter giving the best performance, 
+  #           use "1se" to choose the simplest model that gives performance within 1se from the best one
+  # sd: standard deviation used to generate random initial values for individual weight vectors
+  
   G = length(X.list)
   flds.list = lapply(1:G, function(g) createFolds(Y.list[[g]], k = nfolds))
   MSE.list = list()
@@ -475,7 +541,7 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
     Y.val = do.call(rbind, Y.val.list)
     
     ml.list = lapply(parameter.set, function(parameter) 
-      continuum.multigroup.iter(X.train.list, Y.train.list, lambda = lambda, maxiter = maxiter,     
+      continuum.multigroup.iter(X.train.list, Y.train.list, maxiter = maxiter,     
                                 gam = parameter$gam, rankJ = parameter$rankJ, rankA = parameter$rankA, 
                                 center.X = center.X, scale.X = scale.X, center.Y = center.Y, scale.Y = scale.Y, orthIndiv = orthIndiv,
                                 sd = sd))
@@ -491,18 +557,18 @@ cv.continnum.iter = function(X.list, Y.list, lambda = 0, parameter.set, nfolds =
   if (criteria == "1se"){
     absBest = min(rMSE)
     MSEsd = apply(MSE, 2, function(x) sd(sqrt(x)))/sqrt(nfolds)
-    # ix = min(which((rMSE - MSEsd) < absBest))
-    # parameter = parameter.set[[ix]]
     
-    rMSE.mtx = matrix(rMSE, ncol = L+1, byrow = T)
+    gam_list = c()
+    for (para in parameter.set){
+      gam_list = c(gam_list, para$gam)
+    }
+    num_gam = length(unique(gam_list))
+    
+    rMSE.mtx = matrix(rMSE, ncol = num_gam) # num of cols = number of gams 
     absBest.ix = which.min(rMSE.mtx)
-    #    print(absBest.ix)
-    #    absBest.row.ix = (absBest.ix-1)%%(nrow(rMSE.mtx))+1
     col.ix = ceiling(absBest.ix/nrow(rMSE.mtx))
-    #    print(col.ix)
     row.ix = min(which((rMSE.mtx[, col.ix] - MSEsd[absBest.ix]) < absBest))
-    #    print(row.ix)
-    ix = col.ix + (row.ix-1)*(L+1)
+    ix = col.ix + (row.ix-1)*(num_gam)
     parameter = parameter.set[[ix]]
   }
   if (criteria == "min"){
