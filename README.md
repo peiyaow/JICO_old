@@ -1,8 +1,8 @@
 # R implementation of JICO
 
 All relevant helper functions have been organized into [continumm/function/JICO.R](https://github.com/peiyaow/continuum/blob/master/function/JICO.R).
-- The main function that conducts the multigroup JICO algorithm is [continuum.multigroup.iter](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L160); we also implement [cv.continuum.iter](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L447) to tune gamma and ranks using cross-validation.
-- The function that conducts general continuum algorithm is [continuum](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L41).
+- The main function that conducts the multigroup JICO algorithm is [continuum.multigroup.iter](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L215); we also implement [cv.continuum.iter](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L511) to tune gamma and ranks using cross-validation.
+- The function that conducts general continuum algorithm is [continuum](https://github.com/peiyaow/continuum/blob/master/function/JICO.R#L101).
 
 We provide a [toy example script](https://github.com/peiyaow/continuum/blob/master/sim/toy.R) to get you familarize with the code.
 
