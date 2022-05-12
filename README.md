@@ -6,6 +6,6 @@ All relevant helper functions have been organized into [continumm/function/JICO.
 
 We provide a [toy example script](https://github.com/peiyaow/continuum/blob/master/sim/toy.R) to get you familarize with the code.
 
-We also include all the scripts we used for simulations in [continumm/sim](https://github.com/peiyaow/continuum/tree/master/sim). Unfortunately we do not release the code from real data implementation code since they are confidential. We will grant you the access upon request.
+We also include all the scripts we used for simulations in [continumm/sim](https://github.com/peiyaow/continuum/tree/master/sim). 
 
 For further inquiry please reach out to the repository owner: peiyaow76@gmail.com. We will address your questions at our earliest convenience. 
